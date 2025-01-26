@@ -32,6 +32,7 @@ def main():
             while True:
                 print("1. View Budget")
                 print("2. Add Budget")
+                print("3. Update Budget")
                 print("0. Quit")
                 choice = input("Enter your choice: ")
                 if choice == "1":
@@ -41,6 +42,10 @@ def main():
                 elif choice == "2":
                     bud = Budget.initialize("datagen_new.xlsx")
                     bud.create_budget_process()
+                    break
+                elif choice == "3":
+                    bud = Budget.initialize("datagen_new.xlsx")
+                    bud.update_budget_process()
                     break
                 elif choice == "0":
                     break

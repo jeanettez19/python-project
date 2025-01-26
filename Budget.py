@@ -3,11 +3,13 @@ from datetime import datetime
 import sys
 from Category import Category
 class Budget:
+  __filepath = './datagen_new.xlsx' # Default file path
   __datagen_dict = {}
   __budget_df = pd.DataFrame({"budget_id":[],"date":[],"category":[],"category_id":[],"monthly_budget":[]}) # Default empty df
 
   @classmethod
   def initialize(cls,excel_file):
+    cls.__filepath = excel_file
     # Read Excel file and find max id in the given col
     try:
       cls.__datagen_dict = pd.read_excel(excel_file,['expense', 'budget','income','transaction','category'])
@@ -28,17 +30,19 @@ class Budget:
 
 
   def __init__(self):
+    self.__filepath = Budget.__filepath
     self.__budget_df = Budget.__budget_df
+    try:
+      self.cat = Category.initialize(self.__filepath)
+    except Exception as e:
+      print(f"Error reading file: {e}")
 
   def display_info(self):
     print(f"These are your current budgets for each category: \n\n{self.__budget_df.to_string(index=False)}")
 
 
   def create_budget(self,date,category_id,monthly_budget):
-    try:
-      cat = Category.initialize('datagen_new.xlsx')
-    except Exception as e:
-      print(f"Error reading file: {e}")
+
 
     try:
       category_id = int(category_id)
@@ -53,11 +57,11 @@ class Budget:
         raise TypeError(f"Category ID must be an integer, got {type(category_id).__name__}.")
 
         # Check if the budget_id exists in the 'budget_id' column
-      if cat.get_category(category_id):
+      if self.cat.get_category(category_id):
         new_row = pd.DataFrame({
         "budget_id": [self.__budget_df['budget_id'].max() + 1 if not self.__budget_df.empty else 1],
         "date":[datetime.strptime(date, "%d-%m-%Y").replace(hour=0, minute=0, second=0)],
-        "category": [cat.get_category(category_id)],
+        "category": [self.cat.get_category(category_id)],
         "category_id":[category_id],
         "monthly_budget": [monthly_budget]
         })
@@ -65,7 +69,7 @@ class Budget:
         self.__datagen_dict['budget'] = self.__budget_df
             # Try saving to an Excel file
         try:
-            with pd.ExcelWriter('datagen_new.xlsx') as writer:
+            with pd.ExcelWriter(self.__filepath) as writer:
                 # Write each DataFrame to its respective sheet
                 for sheet_name, data in self.__datagen_dict.items():
                     data.to_excel(writer, sheet_name=sheet_name, index=False)
@@ -95,13 +99,44 @@ class Budget:
           if budget_id in self.__budget_df['budget_id'].values:
               # Update the monthly budget for the matching budget_id
               self.__budget_df.loc[self.__budget_df['budget_id'] == budget_id, 'monthly_budget'] = new_monthly_budget
-              self.__budget_df.loc[self.__budget_df['budget_id'] == budget_id, 'category_name'] = category_id
-              return self.__budget_df
+              self.__budget_df.loc[self.__budget_df['budget_id'] == budget_id, 'category'] = self.cat.get_category(category_id)
+              self.__budget_df.loc[self.__budget_df['budget_id'] == budget_id, 'category_id'] = category_id
+              self.__datagen_dict['budget'] = self.__budget_df
+              return True
           else:
               raise ValueError(f"Budget ID {budget_id} does not exist in the 'budget_id' column.")
       except Exception as e:
           # Handle any unexpected errors
           raise RuntimeError(f"An error occurred while updating the budget: {e}")
+        
+  def update_budget_process(self):
+    self.display_info()
+    while True:
+      try:
+        budget_id = int(input("Enter the budget ID to update: "))
+        new_monthly_budget = float(input(f"Enter the new monthly budget: "))
+        category_id = int(input("Enter the category ID: "))
+        updated_status=self.update_budget(budget_id,category_id,new_monthly_budget)
+        if updated_status:
+          print("Successfully updated budget! 🎉\n")
+          self.display_info()
+          # Try saving to an Excel file
+          try:
+              with pd.ExcelWriter(self.__filepath) as writer:
+                  # Write each DataFrame to its respective sheet
+                  for sheet_name, data in self.__datagen_dict.items():
+                      data.to_excel(writer, sheet_name=sheet_name, index=False)
+              print("File saved successfully.")
+          except Exception as e:
+              print(f"Error writing to Excel file: {e}")
+          break
+        else:
+          print("Please enter a valid budget ID")
+      except ValueError:
+        print("Invalid input. Please enter a valid budget ID.")
+      except Exception as e:
+        # Handle unexpected errors
+        print(f"An unexpected error occurred: {e}")
 
 
 
@@ -172,7 +207,7 @@ class Budget:
           self.display_info()
           # Try saving to an Excel file
           try:
-              with pd.ExcelWriter('datagen_new.xlsx') as writer:
+              with pd.ExcelWriter(self.__filepath) as writer:
                   # Write each DataFrame to its respective sheet
                   for sheet_name, data in self.__datagen_dict.items():
                       data.to_excel(writer, sheet_name=sheet_name, index=False)
@@ -225,7 +260,7 @@ class Budget:
               category_id = int(category_id)
 
               # Initialize the Category class
-              cat = Category.initialize('datagen_new.xlsx')
+              cat = Category.initialize(self.__filepath)
 
               # Check if the category exists
               cat_row = cat.get_category(category_id)
