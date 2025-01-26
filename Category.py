@@ -1,32 +1,20 @@
-#category
-import pandas as pd
-# Generates a dict & df of categories then saves it
-category_dict = {'category_name':['Salary','Food','Entertainment','Transport']}
-category_df = pd.DataFrame(data=category_dict)
-
-# Add a category_id column
-category_df['category_id'] = range(1, len(category_df) + 1)
-
-# Set category_id as the index
-category_df.set_index('category_id', inplace=True)
-category_df.to_excel('Categories.xlsx')
-
-# Reads excel
-category_df = pd.read_excel('Categories.xlsx')
-category_df
-
+import pandas as pd 
+import sys
 class Category:
-  __category_df = pd.DataFrame({"category_id":[],"category_name":[]}) # Default empty df
+  __datagen_dict = {}
+  __category_df= pd.DataFrame({"category_id":[],"category_name":[]}) # Default empty df
+  
 
   @classmethod
   def initialize(cls,excel_file):
     # Read Excel file and find max id in the given col
     try:
-      cls.__category_df = pd.read_excel(excel_file)
+      cls.__datagen_dict = pd.read_excel(excel_file,sheet_name=['expense','budget','income','transaction','category'])
+      cls.__category_df = cls.__datagen_dict['category']
 
     except FileNotFoundError:
       print(f"{excel_file} does not exist... Creating new file")
-      cls.__category_df.to_excel(excel_file, index=False)
+      cls.__category_df.to_excel(excel_file, sheet_name='category',index=False)
 
     except PermissionError:
       print(f"Permission denied to read {excel_file}, please close the file before proceeding.")
@@ -62,22 +50,49 @@ class Category:
           raise RuntimeError(f"An error occurred while retrieving the category: {e}")
 
 
-
   def create_category(self,category_name):
     new_row = pd.DataFrame({
     "category_id": [self.__category_df['category_id'].max() + 1 if not self.__category_df.empty else 1],
     "category_name": [category_name]
     })
     self.__category_df = pd.concat([self.__category_df, new_row], ignore_index=True)
+    self.__datagen_dict['category'] = self.__category_df
+    # Try saving to an Excel file
     try:
-      self.__category_df.to_excel('drive/MyDrive/Colab Notebooks/Categories.xlsx',index=False)
+        with pd.ExcelWriter('datagen_new.xlsx') as writer:
+            # Write each DataFrame to its respective sheet
+            for sheet_name, data in self.__datagen_dict.items():
+                data.to_excel(writer, sheet_name=sheet_name, index=False)
+        print("File saved successfully.")
     except Exception as e:
-      print(f"Error writing file: {e}")
+        print(f"Error writing to Excel file: {e}")
 
   def create_category_process(self):
-    self.display_info()
-    category_name = input("Enter new category name: ")
-    self.create_category(category_name)
-    print("Successfully added new category!!! \n\n")
-    self.display_info()
+      self.display_info()
 
+      while True:
+          # Prompt the user to enter a new category name
+          category_name = input("Enter new category name (3-20 characters, first letter capitalized): ")
+
+          # Validate the input
+          if len(category_name) < 3 or len(category_name) > 20:
+              print("Error: Category name must be between 3 and 20 characters. Please try again.")
+              continue
+          if not category_name[0].isupper():
+              print("Error: The first letter of the category name must be capitalized. Please try again.")
+              continue
+          if not category_name.isalpha():
+              print("Error: Category name must contain only alphabetic characters. Please try again.")
+              continue
+
+          # If valid, create the category
+          self.create_category(category_name)
+          print("Successfully added new category!!! \n\n")
+          self.display_info()
+          break
+
+
+# Initialize the _id_counter using data from the Excel file
+# cat = Category.initialize('./datagen_new.xlsx')
+# Create a Category instance
+# cat.create_category_process()
