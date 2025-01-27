@@ -62,13 +62,13 @@ class Transaction:
                 new_data = pd.DataFrame(
                     [{"expenses_id": expense.expenses_id, "date": expense.transaction_date,
                       "category": expense.transaction_category, "description": expense.transaction_description,
-                      "amount": expense.transaction_amount} for expense in transactions])
+                      "amount": expense.transaction_amount, "transaction_id": expense.transaction_id} for expense in transactions])
 
             elif type == "income":
                 new_data = pd.DataFrame(
                     [{"income_id": income.income_id, "date": income.transaction_date,
                       "category": income.transaction_category, "description": income.transaction_description,
-                      "amount": income.transaction_amount} for income in transactions])
+                      "amount": income.transaction_amount, "transaction_id": income.transaction_id} for income in transactions])
 
             # Append new data to existing data
             if existing_data.empty:
@@ -77,7 +77,7 @@ class Transaction:
                 updated_data = pd.concat([existing_data, new_data], ignore_index=True)
             # Save back to Excel
             updated_data.to_excel(excel_file, index=False)
-            print(f"Transactions saved to {excel_file}")
+            print(f"Transactions saved")
         except Exception as e:
             print(f"Error saving to Excel: {e}")
 
@@ -143,6 +143,7 @@ class Expenses(Transaction):
         super().__init__(transaction_date, transaction_category, transaction_description, transaction_amount)
         self.expenses_id = Expenses._id_counter
         Expenses._id_counter += 1
+        self.transaction_id = Transaction._id_counter
         Transaction._id_counter += 1
 
     def displayInfo(self):
@@ -154,6 +155,7 @@ class Income(Transaction):
 
     def __init__(self,transaction_date, transaction_category, transaction_description, transaction_amount):
         super().__init__(transaction_date, transaction_category, transaction_description, transaction_amount)
+        self.transaction_id = Transaction._id_counter
         self.income_id = Income._id_counter
         Income._id_counter += 1
         Transaction._id_counter += 1
