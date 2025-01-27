@@ -54,21 +54,21 @@ class Transaction:
             # Prepare new data
             if type == "transactions":
                 new_data = pd.DataFrame(
-                    [{"Transaction ID": transaction.transaction_id, "Date": transaction.transaction_date,
-                      "Category": transaction.transaction_category, "Description": transaction.transaction_description,
-                      "Amount": transaction.transaction_amount} for transaction in transactions])
+                    [{"transaction_id": transaction.transaction_id, "date": transaction.transaction_date,
+                      "category": transaction.transaction_category, "description": transaction.transaction_description,
+                      "amount": transaction.transaction_amount} for transaction in transactions])
 
             elif type == "expenses"    :
                 new_data = pd.DataFrame(
-                    [{"Expenses ID": expense.expenses_id, "Date": expense.transaction_date,
-                      "Category": expense.transaction_category, "Description": expense.transaction_description,
-                      "Amount": expense.transaction_amount} for expense in transactions])
+                    [{"expenses_id": expense.expenses_id, "date": expense.transaction_date,
+                      "category": expense.transaction_category, "description": expense.transaction_description,
+                      "amount": expense.transaction_amount} for expense in transactions])
 
             elif type == "income":
                 new_data = pd.DataFrame(
-                    [{"Income ID": income.income_id, "Date": income.transaction_date,
-                      "Category": income.transaction_category, "Description": income.transaction_description,
-                      "Amount": income.transaction_amount} for income in transactions])
+                    [{"income_id": income.income_id, "date": income.transaction_date,
+                      "category": income.transaction_category, "description": income.transaction_description,
+                      "amount": income.transaction_amount} for income in transactions])
 
             # Append new data to existing data
             if existing_data.empty:
@@ -117,20 +117,20 @@ class Transaction:
                 except ValueError:
                     print("invalid input. PLease enter numeric values\n")
 
-            transaction_file = Transaction.initialize_id_counter("transaction.xlsx","Transaction ID", False)
+            transaction_file = Transaction.initialize_id_counter("./data/transaction.xlsx","transaction_id", False)
             # Create a new transaction
             if transaction_word == "Income":
-                income_file = Income.initialize_id_counter("income.xlsx", "Income ID")
+                income_file = Income.initialize_id_counter("./data/income.xlsx", "income_id")
                 new_transaction = Income(date, category_name, description, amount)
-                Income.save_file_to_excel("income.xlsx", income_file,[new_transaction], "income")
+                Income.save_file_to_excel("./data/income.xlsx", income_file,[new_transaction], "income")
 
             elif transaction_word == "Expenses":
-                expenses_file = Expenses.initialize_id_counter("expense.xlsx", "Expenses ID")
+                expenses_file = Expenses.initialize_id_counter("./data/expense.xlsx", "expenses_id")
                 amount = -amount
                 new_transaction = Expenses(date, category_name, description, amount)
-                Expenses.save_file_to_excel("expense.xlsx", expenses_file,[new_transaction], "expenses")
+                Expenses.save_file_to_excel("./data/expense.xlsx", expenses_file,[new_transaction], "expenses")
 
-            Transaction.save_file_to_excel("transaction.xlsx", transaction_file,[new_transaction], "transactions")
+            Transaction.save_file_to_excel("./data/transaction.xlsx", transaction_file,[new_transaction], "transactions")
             print(f"\n{transaction_word} added successfully:")
             new_transaction.displayInfo()  # Display the transaction details
         except Exception as e:
