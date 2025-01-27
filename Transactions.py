@@ -45,7 +45,7 @@ class Transaction:
         self.transaction_description = transaction_description
         self.transaction_category = transaction_category
 
-    def displayInfo(self):
+    def display_info(self):
         print(f"Transaction ID:{self.transaction_id}, Date:{self.transaction_date}, Category:{self.transaction_category}" +
         f"Description:{self.transaction_description}, Amount:{self.transaction_amount}")
 
@@ -132,7 +132,7 @@ class Transaction:
 
             Transaction.save_file_to_excel("./data/transaction.xlsx", transaction_file,[new_transaction], "transactions")
             print(f"\n{transaction_word} added successfully:")
-            new_transaction.displayInfo()  # Display the transaction details
+            new_transaction.display_info()  # Display the transaction details
         except Exception as e:
             print(f"An error occurred: {e}")
 
@@ -226,7 +226,7 @@ class Expenses(Transaction):
         self.transaction_id = Transaction._id_counter
         Transaction._id_counter += 1
 
-    def displayInfo(self):
+    def display_info(self):
         print(f"Expenses ID:{self.expenses_id}, Date:{self.transaction_date}, " +
               f"Category:{self.transaction_category}, Description:{self.transaction_description}, Amount:{self.transaction_amount}")
         
@@ -240,6 +240,6 @@ class Income(Transaction):
         Income._id_counter += 1
         Transaction._id_counter += 1
 
-    def displayInfo(self):
+    def display_info(self):
         print(f"Income ID:{self.income_id}, Date:{self.transaction_date}, Category:{self.transaction_category}," +
               f" Description:{self.transaction_description}, Amount:{self.transaction_amount}")        
