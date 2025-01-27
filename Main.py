@@ -35,15 +35,15 @@ def main():
                 print("0. Quit")
                 choice = input("Enter your choice: ")
                 if choice == "1":
-                    bud = Budget.initialize("datagen_new.xlsx")
+                    bud = Budget.initialize("./data/budgets.xlsx","./data/Categories.xlsx")
                     bud.display_info()
                     break
                 elif choice == "2":
-                    bud = Budget.initialize("datagen_new.xlsx")
+                    bud = Budget.initialize("./data/budgets.xlsx","./data/Categories.xlsx")
                     bud.create_budget_process()
                     break
                 elif choice == "3":
-                    bud = Budget.initialize("datagen_new.xlsx")
+                    bud = Budget.initialize("./data/budgets.xlsx","./data/Categories.xlsx")
                     bud.update_budget_process()
                     break
                 elif choice == "0":
@@ -75,6 +75,7 @@ def main():
             while True:
                 print("1. View Insights")
                 print("2. Add Categories")
+                print("3. Delete Categories")
                 print("0. Quit")
                 choice = input("Enter your choice: ")
                 if choice == "1":
@@ -101,10 +102,15 @@ def main():
                     
                     break
                 elif choice == "2":
-                    cat = Category.initialize("./datagen_new.xlsx")
+                    cat = Category.initialize("./data/Categories.xlsx")
                     cat.create_category_process()
                     
                     break
+                
+                elif choice == "3":
+                    cat = Category.initialize("./data/Categories.xlsx")
+                    cat.delete_category()
+
                 elif choice == "0":
                     break
                 else:
