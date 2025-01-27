@@ -131,8 +131,7 @@ class Category:
                     if delete_confirmation.lower() == 'y':
                         new_df = self.__category_df
                         new_df.drop((selected_category_id-1), inplace=True)
-                        # new_df.to_excel(self.__filepath,index=False)
-                        new_df.to_excel("./data/Categories_Test.xlsx",index=False)
+                        new_df.to_excel(self.__filepath,index=False)
                         print("Successfully deleted category! 🎉\n")
                         self.display_info()
                         break
