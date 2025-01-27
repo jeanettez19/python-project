@@ -1,7 +1,7 @@
 import pandas as pd
 from datetime import datetime
 import sys
-from Category import Category
+from category import Category
 class Budget:
   
     __budget_df = pd.DataFrame({"budget_id":[],"date":[],"category":[],"category_id":[],"monthly_budget":[]}) # Default empty df
