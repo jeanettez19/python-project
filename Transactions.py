@@ -136,6 +136,86 @@ class Transaction:
         except Exception as e:
             print(f"An error occurred: {e}")
 
+    def remove_transaction(transaction_word):
+        if transaction_word == "Expenses":
+            try:
+                expenses_data = pd.read_excel("./data/expense.xlsx")
+                total_rows = len(expenses_data)
+                start_index = max(0, total_rows - 10)
+
+                while True:
+                    print(expenses_data.iloc[start_index:total_rows])
+                    
+                    # Check if there are earlier rows
+                    if start_index == 0:
+                        print("\nNo more rows to display.")
+                        #break
+                    print("Enter 'n' to view earlier 10 entries")
+                    print("Enter '0' to exit")
+                    print("Enter the Income ID of the entry to remove it")
+                    next_action = input("Enter your choice: ").strip().lower()
+
+                    if next_action == 'n':
+                            # Update the indices to show the previous 10 rows
+                        total_rows = start_index
+                        start_index = max(0, start_index - 10)
+
+                    elif next_action == '0':
+                        break
+
+                    elif next_action.isdigit() and int(next_action) != 0:
+                        row_number = int(next_action)
+                        if row_number in expenses_data["expenses_id"].values:
+                            expenses_data = expenses_data[expenses_data["expenses_id"] != row_number]
+                            expenses_data.to_excel("./data/expense.xlsx", index = False)
+                            print (f"Entry with Expense ID {row_number} has been removed.")
+                            break
+                        else:
+                            print (f"Expense ID {row_number} not found. Please enter a valid Expense ID")
+                    else:
+                        print("Invalid selection. Choose 'n' to view previous 10 rows, or '0' to exit")
+            except Exception as e:
+                    print(f"Error: {e}")   
+        elif transaction_word == 'Income':
+            try:
+                income_data = pd.read_excel("./data/income.xlsx")
+                total_rows = len(income_data)
+                start_index = max(0, total_rows - 10)
+
+                while True:
+                    print(income_data.iloc[start_index:total_rows])
+                    
+                    # Check if there are earlier rows
+                    if start_index == 0:
+                        print("\nNo more rows to display.")
+                        #break
+                    print("Enter 'n' to view earlier 10 entries")
+                    print("Enter '0' to exit")
+                    print("Enter the Income ID of the entry to remove it")
+                    next_action = input("Enter your choice: ").strip().lower()
+
+                    if next_action == 'n':
+                            # Update the indices to show the previous 10 rows
+                        total_rows = start_index
+                        start_index = max(0, start_index - 10)
+
+                    elif next_action == '0':
+                        break
+
+                    elif next_action.isdigit() and int(next_action) != 0:
+                        row_number = int(next_action)
+                        if row_number in income_data["income_id"].values:
+                            income_data = income_data[income_data["income_id"] != row_number]
+                            income_data.to_excel("./data/income.xlsx", index = False)
+                            print (f"Entry with Income ID {row_number} has been removed.")
+                            break
+                        else:
+                            print (f"Income ID {row_number} not found. Please enter a valid Income ID")
+                    else:
+                        print("Invalid selection. Choose 'n' to view previous 10 rows, or '0' to exit")
+            except Exception as e:
+                    print(f"Error: {e}")
+
 class Expenses(Transaction):
     _id_counter = 1
 
