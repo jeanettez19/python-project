@@ -1,11 +1,12 @@
 import pandas as pd
 from datetime import datetime
 import sys
-from Category import Category
+from category import Category
+
 class Budget:
   __budget_df = pd.DataFrame({"budget_id":[],"date":[],"category":[],"category_id":[],"monthly_budget":[]}) # Default empty df
   __filepath = './data/budget.xlsx' # Default file path
-  __cat_file_path = './data/Categories.xlsx' # Default file path
+  __cat_file_path = './data/categories.xlsx' # Default file path
   @classmethod
   def initialize(cls,excel_file,cat_file_path):
     # Read Excel file and find max id in the given col
