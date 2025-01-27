@@ -1,8 +1,8 @@
-from Transactions import Transaction
-from QuickOverview import QuickOverview
-from Data_Dynamic import ExpenseAnalysis
-from Category import Category
-from Budget import Budget
+from transactions import Transaction
+from quick_overview import QuickOverview
+from data_dynamic import ExpenseAnalysis
+from category import Category
+from budget import Budget
 
 def main():
 
@@ -36,19 +36,19 @@ def main():
                 print("0. Quit")
                 choice = input("Enter your choice: ")
                 if choice == "1":
-                    bud = Budget.initialize("./data/budgets.xlsx","./data/Categories.xlsx")
+                    bud = Budget.initialize("./data/budgets.xlsx","./data/categories.xlsx")
                     bud.display_info()
                     break
                 elif choice == "2":
-                    bud = Budget.initialize("./data/budgets.xlsx","./data/Categories.xlsx")
+                    bud = Budget.initialize("./data/budgets.xlsx","./data/categories.xlsx")
                     bud.create_budget_process()
                     break
                 elif choice == "3":
-                    bud = Budget.initialize("./data/budgets.xlsx","./data/Categories.xlsx")
+                    bud = Budget.initialize("./data/budgets.xlsx","./data/categories.xlsx")
                     bud.update_budget_process()
                     break
                 elif choice == "4":
-                    bud = Budget.initialize("./data/budgets.xlsx","./data/Categories.xlsx")
+                    bud = Budget.initialize("./data/budgets.xlsx","./data/categories.xlsx")
                     bud.delete_budget_process()
                 elif choice == "0":
                     break
@@ -127,13 +127,13 @@ def main():
                     
                     break
                 elif choice == "2":
-                    cat = Category.initialize("./data/Categories.xlsx")
+                    cat = Category.initialize("./data/categories.xlsx")
                     cat.create_category_process()
                     
                     break
                 
                 elif choice == "3":
-                    cat = Category.initialize("./data/Categories.xlsx")
+                    cat = Category.initialize("./data/categories.xlsx")
                     cat.delete_category()
 
                 elif choice == "0":
