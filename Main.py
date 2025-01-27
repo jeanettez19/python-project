@@ -5,15 +5,14 @@ from Category import Category
 from Budget import Budget
 
 def main():
-    print("Welcome to the Expense Tracker!")
 
+    print("Welcome to the Expense Tracker!")
     print(f"Hello! What would you like to do")
-    overview = QuickOverview("datagen_new.xlsx")
+    overview = QuickOverview()
     result = overview.get_current_month_overview()
     print("Financial Overview for the Current Month:")
-    print(f"- Total Budget: ${result['Total Budget']:.2f}")
+    print(f"- Total Income: ${result['Total Income']:.2f}")
     print(f"- Total Expense Spent: ${result['Total Expense']:.2f}")
-    print(f"- Remaining Budget: ${result['Remaining Budget']:.2f}")
     
     while True:
         # Menu options
