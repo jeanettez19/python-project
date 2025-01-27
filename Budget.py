@@ -5,11 +5,13 @@ from Category import Category
 class Budget:
   __budget_df = pd.DataFrame({"budget_id":[],"date":[],"category":[],"category_id":[],"monthly_budget":[]}) # Default empty df
   __filepath = './data/budget.xlsx' # Default file path
+  __cat_file_path = './data/Categories.xlsx' # Default file path
   @classmethod
-  def initialize(cls,excel_file):
+  def initialize(cls,excel_file,cat_file_path):
     # Read Excel file and find max id in the given col
     try:
       cls.__filepath = excel_file
+      cls.__cat_file_path = cat_file_path
       cls.__budget_df = pd.read_excel(excel_file)
     except FileNotFoundError:
       print(f"{excel_file} does not exist... Creating new file")
@@ -29,7 +31,7 @@ class Budget:
   def __init__(self):
     self.__budget_df = Budget.__budget_df
     try:
-      self.cat = Category.initialize(self.__filepath)
+      self.cat = Category.initialize(self.__cat_file_path)
     except Exception as e:
       print(f"Error reading file: {e}")
 
@@ -242,7 +244,7 @@ class Budget:
               category_id = int(category_id)
 
               # Initialize the Category class
-              cat = Category.initialize(self.__filepath)
+              cat = Category.initialize(self.__cat_file_path)
 
               # Check if the category exists
               cat_row = cat.get_category(category_id)
@@ -266,7 +268,7 @@ class Budget:
     
 
 # Initialize the budget using data from the Excel file
-budget = Budget.initialize('./data/budget.xlsx')
+# budget = Budget.initialize('./data/budget.xlsx')
 # Create a Category instance
-budget.create_budget_process()
-budget.delete_budget_process()
+# budget.create_budget_process()
+# budget.delete_budget_process()
