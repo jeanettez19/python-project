@@ -82,7 +82,7 @@ class Transaction:
             print(f"Error saving to Excel: {e}")
 
     def add_transaction(transaction_word):
-        cat = Category.initialize('Categories.xlsx')
+        cat = Category.initialize('./data/Categories.xlsx')
         print(f"\nEnter {transaction_word} details:")
         try:
             while True:
