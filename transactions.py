@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 from datetime import datetime
 import os,sys
-from Category import Category
+from category import Category
 
 class Transaction:
     _id_counter = 1  # Default value if no data is loaded
