@@ -3,17 +3,14 @@ from datetime import datetime
 import sys
 from Category import Category
 class Budget:
-  __filepath = './datagen_new.xlsx' # Default file path
-  __datagen_dict = {}
   __budget_df = pd.DataFrame({"budget_id":[],"date":[],"category":[],"category_id":[],"monthly_budget":[]}) # Default empty df
-
+  __filepath = './data/budget.xlsx' # Default file path
   @classmethod
   def initialize(cls,excel_file):
-    cls.__filepath = excel_file
     # Read Excel file and find max id in the given col
     try:
-      cls.__datagen_dict = pd.read_excel(excel_file,['expense', 'budget','income','transaction','category'])
-      cls.__budget_df = cls.__datagen_dict['budget']
+      cls.__filepath = excel_file
+      cls.__budget_df = pd.read_excel(excel_file)
     except FileNotFoundError:
       print(f"{excel_file} does not exist... Creating new file")
       cls.__budget_df.to_excel(excel_file,sheet_name='budget' ,index=False)
@@ -30,7 +27,6 @@ class Budget:
 
 
   def __init__(self):
-    self.__filepath = Budget.__filepath
     self.__budget_df = Budget.__budget_df
     try:
       self.cat = Category.initialize(self.__filepath)
@@ -66,13 +62,9 @@ class Budget:
         "monthly_budget": [monthly_budget]
         })
         self.__budget_df = pd.concat([self.__budget_df, new_row], ignore_index=True)
-        self.__datagen_dict['budget'] = self.__budget_df
             # Try saving to an Excel file
         try:
-            with pd.ExcelWriter(self.__filepath) as writer:
-                # Write each DataFrame to its respective sheet
-                for sheet_name, data in self.__datagen_dict.items():
-                    data.to_excel(writer, sheet_name=sheet_name, index=False)
+            self.__budget_df.to_excel(self.__filepath, index=False)
             print("File saved successfully.")
         except Exception as e:
             print(f"Error writing to Excel file: {e}")
@@ -101,7 +93,6 @@ class Budget:
               self.__budget_df.loc[self.__budget_df['budget_id'] == budget_id, 'monthly_budget'] = new_monthly_budget
               self.__budget_df.loc[self.__budget_df['budget_id'] == budget_id, 'category'] = self.cat.get_category(category_id)
               self.__budget_df.loc[self.__budget_df['budget_id'] == budget_id, 'category_id'] = category_id
-              self.__datagen_dict['budget'] = self.__budget_df
               return True
           else:
               raise ValueError(f"Budget ID {budget_id} does not exist in the 'budget_id' column.")
@@ -122,10 +113,7 @@ class Budget:
           self.display_info()
           # Try saving to an Excel file
           try:
-              with pd.ExcelWriter(self.__filepath) as writer:
-                  # Write each DataFrame to its respective sheet
-                  for sheet_name, data in self.__datagen_dict.items():
-                      data.to_excel(writer, sheet_name=sheet_name, index=False)
+              self.__budget_df.to_excel(self.__filepath, index=False)
               print("File saved successfully.")
           except Exception as e:
               print(f"Error writing to Excel file: {e}")
@@ -157,10 +145,7 @@ class Budget:
               raise ValueError(f"Budget ID {budget_id} does not exist in the 'budget_id' column.")
           
           # Drop the row with the matching 'budget_id'
-          self.__budget_df.drop(budget_row.index, inplace=True)
-          self.__datagen_dict['budget'] = self.__budget_df
-          
-          
+          self.__budget_df.drop(budget_row.index, inplace=True)          
           return True
   
       except TypeError as e:
@@ -207,10 +192,7 @@ class Budget:
           self.display_info()
           # Try saving to an Excel file
           try:
-              with pd.ExcelWriter(self.__filepath) as writer:
-                  # Write each DataFrame to its respective sheet
-                  for sheet_name, data in self.__datagen_dict.items():
-                      data.to_excel(writer, sheet_name=sheet_name, index=False)
+              self.__budget_df.to_excel(self.__filepath, index=False)
               print("File saved successfully.")
           except Exception as e:
               print(f"Error writing to Excel file: {e}")
@@ -284,7 +266,7 @@ class Budget:
     
 
 # Initialize the budget using data from the Excel file
-# budget = Budget.initialize('./datagen_new.xlsx')
+budget = Budget.initialize('./data/budget.xlsx')
 # Create a Category instance
-# budget.create_budget_process()
-# budget.delete_budget_process()
+budget.create_budget_process()
+budget.delete_budget_process()
