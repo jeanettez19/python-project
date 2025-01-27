@@ -1,8 +1,7 @@
 import pandas as pd 
 import sys
 class Category:
-  __filepath = './datagen_new.xlsx' # Default file path
-  __datagen_dict = {}
+  __filepath = './data/Categories.xlsx' # Default file path
   __category_df= pd.DataFrame({"category_id":[],"category_name":[]}) # Default empty df
   
 
@@ -11,8 +10,7 @@ class Category:
     cls.__filepath = excel_file
     # Read Excel file and find max id in the given col
     try:
-      cls.__datagen_dict = pd.read_excel(excel_file,sheet_name=['expense','budget','income','transaction','category'])
-      cls.__category_df = cls.__datagen_dict['category']
+      cls.__category_df = pd.read_excel(excel_file, sheet_name='category')
 
     except FileNotFoundError:
       print(f"{excel_file} does not exist... Creating new file")
@@ -59,13 +57,13 @@ class Category:
     "category_name": [category_name]
     })
     self.__category_df = pd.concat([self.__category_df, new_row], ignore_index=True)
-    self.__datagen_dict['category'] = self.__category_df
     # Try saving to an Excel file
     try:
-        with pd.ExcelWriter(self.__filepath) as writer:
-            # Write each DataFrame to its respective sheet
-            for sheet_name, data in self.__datagen_dict.items():
-                data.to_excel(writer, sheet_name=sheet_name, index=False)
+        self.__category_df.to_excel(self.__filepath, sheet_name='category', index=False)
+        # with pd.ExcelWriter(self.__filepath) as writer:
+        #     # Write each DataFrame to its respective sheet
+        #     for sheet_name, data in self.__category_df.items():
+        #         data.to_excel(writer, index=False)
         print("File saved successfully.")
     except Exception as e:
         print(f"Error writing to Excel file: {e}")
@@ -94,8 +92,9 @@ class Category:
           self.display_info()
           break
 
-
 # Initialize the _id_counter using data from the Excel file
-# cat = Category.initialize('./datagen_new.xlsx')
+# cat = Category()
+# cat = Category.initialize('./data/Categories.xlsx')
+# cat.display_info()
 # Create a Category instance
 # cat.create_category_process()
