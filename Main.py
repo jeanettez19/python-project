@@ -18,7 +18,7 @@ def main():
         # Menu options
         print("\nMenu:")
         print("1. Manage Budget")
-        print("2. Add Transaction")
+        print("2. Manage Transaction")
         print("3. Others")
         print("0. Quit")
 
@@ -32,6 +32,7 @@ def main():
                 print("1. View Budget")
                 print("2. Add Budget")
                 print("3. Update Budget")
+                print("4. Delete Budget")
                 print("0. Quit")
                 choice = input("Enter your choice: ")
                 if choice == "1":
@@ -46,6 +47,9 @@ def main():
                     bud = Budget.initialize("./data/budgets.xlsx","./data/Categories.xlsx")
                     bud.update_budget_process()
                     break
+                elif choice == "4":
+                    bud = Budget.initialize("./data/budgets.xlsx","./data/Categories.xlsx")
+                    bud.delete_budget_process()
                 elif choice == "0":
                     break
                 else:
@@ -60,11 +64,32 @@ def main():
                 print("0. Quit")
                 choice = input("Enter your choice: ")
                 if choice == "1":
-                    Transaction.add_transaction("Income")
-                    break
+                    print("1. Add Income Entry")
+                    print("2. Remove Income Entry")
+                    print("0. Quit")
+                    choice = input("Enter your choice: ")
+                    if choice == "1":
+                        Transaction.add_transaction("Income")
+                    elif choice == "2":
+                        Transaction.remove_transaction("Income")
+                    elif choice == "0":
+                        break
+                    else:
+                        print("Invalid choice. Please select a valid option")
+
                 elif choice == "2":
-                    Transaction.add_transaction("Expenses")
-                    break
+                    print("1. Add Expense Entry")
+                    print("2. Remove Expense Entry")
+                    print("0. Quit")
+                    choice = input("Enter your choice: ")
+                    if choice == "1":
+                        Transaction.add_transaction("Expenses")
+                    elif choice == "2":
+                        Transaction.remove_transaction("Expenses")
+                    elif choice == "0":
+                        break
+                    else:
+                        print("Invalid choice. Please select a valid option")
                 elif choice == "0":
                     break
                 else:
