@@ -130,3 +130,31 @@ analysis.expenses_vs_budget_monthly()
 
 # Graph 5, display the expenses by category, monthly basis
 analysis.expenses_by_category_monthly()
+
+
+
+
+###############################################################################################################################################
+# Create the matplotlib figure
+fig = plt.figure(figsize=(8, 6))
+ax = fig.add_subplot(111)
+fig, ax = plt.subplots()
+analysis1.overview()
+
+fig, ax = plt.subplots()
+ax.pie(
+    [analysis1.total_budget, analysis1.total_actual],
+    labels=['Budgeted', 'Actual'],
+    autopct='%1.1f%%',
+    colors=['lightblue', 'salmon'],
+    startangle=90,
+    explode=(0.1, 0)
+)
+
+fig, ax = plt.subplots()
+
+fig, ax = plt.subplots()
+
+fig, ax = plt.subplots()
+
+fig, ax = plt.subplots()
