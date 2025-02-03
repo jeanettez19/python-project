@@ -4,8 +4,9 @@ from tkinter import messagebox
 from tkinter import ttk
 from tkinter.ttk import Treeview
 from datetime import datetime
-from transactions import Transaction
+from transactions import Transaction, Expenses
 import os
+import pandas as pd
 
 
 class ExpenseTracker:
@@ -26,8 +27,11 @@ class ExpenseTracker:
 
             # Sample data for table display purooses
 
-            transactions_data = Transaction.initialize_id_counter(current_directory + "/data/transaction.xlsx", "transaction_id", False)
-            data = transactions_data.drop(columns=["transaction_id"]).to_dict("records")
+            expenses_data = Expenses.initialize_id_counter(current_directory + "/data/expense.xlsx", "expenses_id")
+            expenses_data["date"] = pd.to_datetime(expenses_data["date"])
+            expenses_data = expenses_data.sort_values(by=["date", "expenses_id"], ascending=True)
+            expenses_data["date"] = expenses_data["date"].dt.strftime("%d-%m-%Y")
+            data = expenses_data.drop(columns=["expenses_id", "transaction_id"]).to_dict(orient="records")
             # Table for the entries
             table_frame = Frame(window)
             table_frame.pack(fill=BOTH, expand=True, padx=5, pady=5)
