@@ -3,7 +3,7 @@ from datetime import datetime
 import sys
 from category import Category
 class Budget:
-  
+    """" Budget class to manage budget data and operations."""
     __budget_df = pd.DataFrame({"budget_id":[],"date":[],"category":[],"category_id":[],"monthly_budget":[]}) # Default empty df
     __filepath = './data/budget.xlsx' # Default file path
     __cat_file_path = './data/Categories.xlsx' # Default file path
@@ -64,8 +64,65 @@ class Budget:
             else:
                 raise ValueError(f"Category ID {category_id} does not exist in the 'Category_ID' column.")
         except Exception as e:
-              # Handle any unexpected errors
-              raise RuntimeError(f"An error occurred while retrieving the budget: {e}")
+            # Handle any unexpected errors
+            raise RuntimeError(f"An error occurred while retrieving the budget: {e}")
+
+    def create_budget_process(self):
+        """Initializes the prompt to create a new budget."""
+        self.display_info()
+        try:
+            self.cat = Category.initialize(self.__cat_file_path)
+        except Exception as e:
+            print(f"Error reading file: {e}")
+        try:
+            while True:
+                date = input("Budget Date (DD-MM-YYYY) :")
+                current_date = datetime.now()
+                try:
+                    datetime.strptime(date, "%d-%m-%Y")
+                    if datetime.strptime(date, "%d-%m-%Y") < current_date:
+                        break
+                    else:
+                        print("Date entered is in the future. Please enter a valid date")
+                except ValueError:
+                    print("Invalid date format. Please enter the date in DD-MM-YYYY format")
+
+            while True:
+                try:
+                    monthly_budget = float(input(f"monthly_budget: "))
+                    if monthly_budget <= 0:
+                        print("monthly_budget must be greater than 0. Please enter monthly_budget again")
+                    else:
+                        round(monthly_budget, 2)
+                        break
+                except ValueError:
+                    print("invalid input. PLease enter numeric values")
+            while True:
+                try:
+                    self.cat.display_info()
+                    # Prompt user for category ID input
+                    category_id = input("Enter new category ID: ")
+                    # Attempt to convert the input to an integer
+                    category_id = int(category_id)
+                    # Initialize the Category class
+                    cat_row = self.cat.get_category(category_id)
+                    if cat_row:
+                        print("Valid category ID entered.")
+                        break  # Exit the loop if a valid category ID is found
+                    else:
+                        print("Invalid category ID. Please enter a valid category ID.")
+                except ValueError:
+                    print("Invalid input. Category ID must be an integer. Please try again.")
+                except Exception as e:
+                    print(e)
+
+        except Exception as e:
+            print(f"An error occured: {e}")
+
+        self.create_budget(date,category_id,monthly_budget)
+        print("Successfully added new budget!!! \n\n")
+        self.display_info()
+
 
     def update_budget(self, budget_id, category_id,new_monthly_budget):
         """Update the monthly budget for a specific budget ID & save to Excel file."""
@@ -92,32 +149,58 @@ class Budget:
     def update_budget_process(self):
         """Initializes the prompt to update a budget."""
         self.display_info()
+        # Validate budget ID
         while True:
             try:
                 budget_id = int(input("Enter the budget ID to update: "))
-                new_monthly_budget = float(input(f"Enter the new monthly budget: "))
-                self.cat = Category.initialize(self.__cat_file_path)
-                self.cat.display_info()
-                category_id = int(input("Enter the category ID: "))
-
-                updated_status=self.update_budget(budget_id,category_id,new_monthly_budget)
-                if updated_status:
-                    print("Successfully updated budget! 🎉\n")
-                    self.display_info()
-                    # Try saving to an Excel file
-                    try:
-                        self.__budget_df.to_excel(self.__filepath, index=False)
-                        print("File saved successfully.")
-                    except Exception as e:
-                        print(f"Error writing to Excel file: {e}")
-                    break
+                if budget_id <= 0:
+                    print("Budget ID must be a positive integer.")
                 else:
-                    print("Please enter a valid budget ID")
+                    break  # Valid input, exit loop
             except ValueError:
                 print("Invalid input. Please enter a valid budget ID.")
+        # Validate new monthly budget
+        while True:
+            try:
+                new_monthly_budget = float(input("Enter the new monthly budget: "))
+                if new_monthly_budget <= 0:
+                    print("Monthly budget must be greater than 0. Please enter again.")
+                else:
+                    new_monthly_budget = round(new_monthly_budget, 2)  # Format to 2 decimal places
+                    break
+            except ValueError:
+                print("Invalid input. Please enter a numeric value.")
+        # Load category data and display
+        self.cat = Category.initialize(self.__cat_file_path)
+        self.cat.display_info()
+        # Validate category ID
+        while True:
+            try:
+                category_id = int(input("Enter the category ID: "))
+                if category_id <= 0:
+                    print("Category ID must be a positive integer.")
+                elif not self.cat.get_category(category_id):
+                    print("Category ID does not exist. Please enter a valid category ID.")
+                else:
+                    break
+            except ValueError:
+                print("Invalid input. Please enter a valid category ID.")
             except Exception as e:
-                # Handle unexpected errors
-                print(f"An unexpected error occurred: {e}")
+                print(e)
+        # Proceed with budget update
+        updated_status = self.update_budget(budget_id, category_id, new_monthly_budget)
+        if updated_status:
+            print("Successfully updated budget! 🎉\n")
+            self.display_info()
+            # Try saving to an Excel file
+            try:
+                self.__budget_df.to_excel(self.__filepath, index=False)
+                print("File saved successfully.")
+            except Exception as e:
+                print(f"Error writing to Excel file: {e}")
+        else:
+            print("Failed to update budget. Please check the provided IDs.")
+
 
     def delete_budget(self, budget_id):
         """Delete a budget entry from the DataFrame & save to Excel file."""
@@ -145,6 +228,37 @@ class Budget:
             # Catch any other unexpected errors
             raise RuntimeError(f"An error occurred while deleting the budget: {e}")
 
+    def delete_budget_process(self):
+        """Initializes the prompt to delete budgets until the user chooses to stop."""
+        self.display_info()
+        while True:
+            try:
+                budget_id = int(input("Enter the budget ID to delete: "))
+                deleted_status = self.delete_budget(budget_id)
+                if deleted_status:
+                    print("Successfully deleted budget! 🎉\n")
+                    self.display_info()
+                    # Try saving to an Excel file
+                    try:
+                        self.__budget_df.to_excel(self.__filepath, index=False)
+                        print("File saved successfully.")
+                    except Exception as e:
+                        print(f"Error writing to Excel file: {e}")
+                else:
+                    print("Please enter a valid budget ID")
+                    continue  # Skip asking for another deletion if ID is invalid
+            except ValueError:
+                print("Invalid input. Please enter a valid budget ID.")
+                continue  # Skip asking for another deletion if input is invalid
+            except Exception as e:
+                print(f"An unexpected error occurred: {e}")
+                continue  # Prevent exit on unexpected error
+            # Ask if the user wants to delete another budget
+            choice = input("Do you want to delete another budget? (y/n): ").strip().lower()
+            if choice in ("no", "n"):
+                print("Exiting delete budget process. ✅")
+                break
+
     def get_budget(self, budget_id):
         """Retrieve the monthly budget for a specific budget ID."""
         try:
@@ -166,86 +280,5 @@ class Budget:
             # Handle any unexpected errors
             raise RuntimeError(f"An error occurred while retrieving the budget: {e}")
 
-    def delete_budget_process(self):
-        """Initializes the prompt to delete a budget."""
-        self.display_info()
-        while True:
-            try:
-                budget_id = int(input("Enter the budget ID to delete: "))
-                deleted_status=self.delete_budget(budget_id)
-                if deleted_status:
-                    print("Successfully deleted budget! 🎉\n")
-                    self.display_info()
-                    # Try saving to an Excel file
-                    try:
-                        self.__budget_df.to_excel(self.__filepath, index=False)
-                        print("File saved successfully.")
-                    except Exception as e:
-                        print(f"Error writing to Excel file: {e}")
-                    break
-                else:
-                    print("Please enter a valid budget ID")
-            except ValueError:
-                print("Invalid input. Please enter a valid budget ID.")
-            except Exception as e:
-                # Handle unexpected errors
-                print(f"An unexpected error occurred: {e}")
 
-    def create_budget_process(self):
-        """Initializes the prompt to create a new budget."""
-        self.display_info()
-        try:
-            self.cat = Category.initialize(self.__cat_file_path)
-        except Exception as e:
-            print(f"Error reading file: {e}")
-        try:
-            while True:
-                date = input("Budget Date (DD-MM-YYYY) :")
-                current_date = datetime.now()
-                try:
-                    datetime.strptime(date, "%d-%m-%Y")
-                    if datetime.strptime(date, "%d-%m-%Y") < current_date:
-                        break
-                    else:
-                          print("Date entered is in the future. Please enter a valid date")
-                except ValueError:
-                    print("Invalid date format. Please enter the date in DD-MM-YYYY format")
-
-            while True:
-                try:
-                    monthly_budget = float(input(f"monthly_budget: "))
-                    if monthly_budget <= 0:
-                        print("monthly_budget must be greater than 0. Please enter monthly_budget again")
-                    elif len(str(monthly_budget).split(".")[1]) > 2:
-                        print("monthly_budget can have at most two decimal places. Please enter monthly_budget again")
-                    else:
-                        break
-                except ValueError:
-                    print("invalid input. PLease enter numeric values")
-
-            while True:
-                try:
-                    self.cat.display_info()
-                    # Prompt user for category ID input
-                    category_id = input("Enter new category ID: ")
-                    # Attempt to convert the input to an integer
-                    category_id = int(category_id)
-                    # Initialize the Category class
-                    cat_row = self.cat.get_category(category_id)
-                    if cat_row:
-                        print("Valid category ID entered.")
-                        break  # Exit the loop if a valid category ID is found
-                    else:
-                        print("Invalid category ID. Please enter a valid category ID.")
-                except ValueError:
-                    print("Invalid input. Category ID must be an integer. Please try again.")
-                except Exception as e:
-                    print(f"An unexpected error occurred: {e}")
-
-        except Exception as e:
-            print(f"An error occured: {e}")
-
-        self.create_budget(date,category_id,monthly_budget)
-        print("Successfully added new budget!!! \n\n")
-        self.display_info()
 
