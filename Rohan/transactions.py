@@ -167,8 +167,8 @@ class Transaction:
                     elif next_action.isdigit() and int(next_action) != 0:
                         row_number = int(next_action)
                         if row_number in expenses_data["expenses_id"].values:
-                            expenses_data = expenses_data[expenses_data["expenses_id"] != row_number]
                             transaction_id = expenses_data[expenses_data["expenses_id"] == row_number]["transaction_id"].values[0]
+                            expenses_data = expenses_data[expenses_data["expenses_id"] != row_number]                            
                             transaction_data = transaction_data[transaction_data["transaction_id"] != transaction_id]
                             expenses_data.to_excel("./data/expense.xlsx", index = False)
                             transaction_data.to_excel("./data/transaction.xlsx", index = False)
@@ -207,10 +207,11 @@ class Transaction:
                         break
 
                     elif next_action.isdigit() and int(next_action) != 0:
+                        print(income_data)
                         row_number = int(next_action)
                         if row_number in income_data["income_id"].values:
-                            income_data = income_data[income_data["income_id"] != row_number]
                             transaction_id = income_data[income_data["income_id"] == row_number]["transaction_id"].values[0]
+                            income_data = income_data[income_data["income_id"] != row_number]                            
                             transaction_data = transaction_data[transaction_data["transaction_id"] != transaction_id]
                             income_data.to_excel("./data/income.xlsx", index = False)
                             transaction_data.to_excel("./data/transaction.xlsx", index = False)
