@@ -29,8 +29,9 @@ class ExpenseTracker:
 
             expenses_data = Expenses.initialize_id_counter(current_directory + "/data/expense.xlsx", "expenses_id")
             expenses_data["date"] = pd.to_datetime(expenses_data["date"])
-            expenses_data = expenses_data.sort_values(by=["date", "expenses_id"], ascending=True)
+            expenses_data = expenses_data.sort_values(by=["date", "expenses_id"], ascending=False)
             expenses_data["date"] = expenses_data["date"].dt.strftime("%d-%m-%Y")
+            expenses_data["amount"] = abs(expenses_data["amount"]).apply(lambda x: f"${x:.2f}")
             data = expenses_data.to_dict(orient="records")
             # Table for the entries
             table_frame = Frame(window)
