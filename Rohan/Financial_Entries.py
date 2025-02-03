@@ -43,6 +43,20 @@ class FinancialEntries:
 
             tree.pack(fill=BOTH, expand=True)
 
+            # Sample data
+            options = ["Expenses", "Income"]
+            cat = Category().initialize("./data/categories.xlsx")
+            categories_all = cat.get_all_categories()
+            # Retrieve only expense items
+            expense_items = [category['category_name'] for category in categories_all if category.get('category_type') == "Expenses"]
+            income_items = [category['category_name'] for category in categories_all if category.get('category_type') == "Income"]
+            
+            # Create a StringVar for the category dropdown
+            cat_var = StringVar()
+             
+            # Create a StringVar for the dynamic dropdown
+            item_var = StringVar() 
+            
             def update_dropdown(*args):
                 selected_category = cat_var.get()
                 if selected_category == "Expenses":
@@ -53,29 +67,9 @@ class FinancialEntries:
                     name_entry['values'] = income_items
                 else:
                     item_var.set('')
-                    name_entry['values'] = []
-
-            # Sample data
-            options = ["Expenses", "Income"]
-            expense_items = ["Rent", "Utilities", "Groceries"]
-            income_items = ["Salary", "Bonus", "Investments"]
-            cat = Category().initialize("./data/categories.xlsx")
-            categories_all = cat.get_all_categories()
-            categories_all = [category['category_name'] for category in categories_all]
-            print(categories_all)
-            
-            expense_items = categories_all
-            income_items = categories_all
-            
-            
+                    name_entry['values'] = expense_items
 
 
-            # Create a StringVar for the category dropdown
-            cat_var = StringVar()
-            cat_var.trace_add('write', update_dropdown)
-
-            # Create a StringVar for the dynamic dropdown
-            item_var = StringVar()
 
             # Input fields
             input_frame = Frame(window)
@@ -89,7 +83,10 @@ class FinancialEntries:
 
             name_entry = ttk.Combobox(input_frame,textvariable=item_var)
             name_entry.pack(side=LEFT, fill=X, expand=True, padx=2)
-            name_entry.set("(Cateogy)")
+            name_entry.set("(Category)")
+            
+            cat_var.trace_add('write', update_dropdown)
+            
 
             description_entry = Entry(input_frame)
             description_entry.pack(side=LEFT, fill=X, expand=True, padx=2)
