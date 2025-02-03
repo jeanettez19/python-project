@@ -31,7 +31,7 @@ class ExpenseTracker:
             expenses_data["date"] = pd.to_datetime(expenses_data["date"])
             expenses_data = expenses_data.sort_values(by=["date", "expenses_id"], ascending=True)
             expenses_data["date"] = expenses_data["date"].dt.strftime("%d-%m-%Y")
-            data = expenses_data.drop(columns=["expenses_id", "transaction_id"]).to_dict(orient="records")
+            data = expenses_data.to_dict(orient="records")
             # Table for the entries
             table_frame = Frame(window)
             table_frame.pack(fill=BOTH, expand=True, padx=5, pady=5)
