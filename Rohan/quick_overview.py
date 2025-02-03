@@ -33,7 +33,7 @@ class QuickOverview:
         current_month_expense = self.expense[
             (self.expense['date'].dt.month == current_month) & (self.expense['date'].dt.year == current_year)
         ]
-        total_expense = current_month_expense['amount'].sum()
+        total_expense = abs(current_month_expense['amount'].sum())
 
         return {
             "Total Income": total_income,
