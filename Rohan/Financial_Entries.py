@@ -6,10 +6,16 @@ from tkinter.ttk import Treeview
 from tkcalendar import DateEntry
 from datetime import datetime
 
+# Import Backend file
+from Backend.transactions import Transaction, Income, Expenses
+from Backend.category import Category
+
+
 
 class FinancialEntries:
 
     def open_FEwindow(self):
+            
 
             # Creating a new window
             window = Toplevel(self)
@@ -39,7 +45,7 @@ class FinancialEntries:
 
             def update_dropdown(*args):
                 selected_category = cat_var.get()
-                if selected_category == "Expense":
+                if selected_category == "Expenses":
                     item_var.set('')
                     name_entry['values'] = expense_items
                 elif selected_category == "Income":
@@ -50,14 +56,23 @@ class FinancialEntries:
                     name_entry['values'] = []
 
             # Sample data
-            options = ["Expense", "Income"]
+            options = ["Expenses", "Income"]
             expense_items = ["Rent", "Utilities", "Groceries"]
             income_items = ["Salary", "Bonus", "Investments"]
+            cat = Category().initialize("./data/categories.xlsx")
+            categories_all = cat.get_all_categories()
+            categories_all = [category['category_name'] for category in categories_all]
+            print(categories_all)
+            
+            expense_items = categories_all
+            income_items = categories_all
+            
+            
 
 
             # Create a StringVar for the category dropdown
             cat_var = StringVar()
-            cat_var.trace('w', update_dropdown)
+            cat_var.trace_add('write', update_dropdown)
 
             # Create a StringVar for the dynamic dropdown
             item_var = StringVar()
@@ -67,10 +82,10 @@ class FinancialEntries:
             input_frame.pack(fill=X, padx=5, pady=5)
 
 
-            options = ["Expense", "Income"]
+            options = ["Expenses", "Income"]
             type_entry = ttk.Combobox(input_frame, values=options, state="readonly", textvariable=cat_var)
             type_entry.pack(side=LEFT, fill=X, expand=True, padx=2)
-            type_entry.set("(Expense / Income)")
+            type_entry.set("(Expenses / Income)")
 
             name_entry = ttk.Combobox(input_frame,textvariable=item_var)
             name_entry.pack(side=LEFT, fill=X, expand=True, padx=2)
@@ -94,7 +109,43 @@ class FinancialEntries:
             )
             date_entry.pack(side=LEFT, fill=X, expand=True, padx=2)
             date_entry.insert(0, "")
+            
+            def get_tree_data():
+                data = []
+                for item in tree.get_children():
+                    data.append(tree.item(item)['values'])
+                print(data)
+                return data
+            
+            def save_to_excel():
+                obj = get_tree_data()
+                for item in obj:
+                    type = item[0]
+                    name = item[1]
+                    description = item[2]
+                    amount = round(float(item[3]), 2)
+                    date = datetime.strptime(item[4], "%m-%d-%Y")
+                    
+                    # add through the backend Transaction class
+                    transaction_file = Transaction.initialize_id_counter("./data/transaction.xlsx","transaction_id", False)
+                    if type == "Income":
+                        income_file = Income.initialize_id_counter("./data/income.xlsx", "income_id")
+                        new_transaction = Income(date, name, description, amount)
+                        Income.save_file_to_excel("./data/income.xlsx", income_file,[new_transaction], "income")
 
+                    elif type == "Expenses":    
+                        expenses_file = Expenses.initialize_id_counter("./data/expense.xlsx", "expenses_id")
+                        amount = -amount
+                        new_transaction = Expenses(date, name, description, amount)
+                        Expenses.save_file_to_excel("./data/expense.xlsx", expenses_file,[new_transaction], "expenses")
+
+                    Transaction.save_file_to_excel("./data/transaction.xlsx", transaction_file,[new_transaction], "transactions")
+
+            def remove_from_table():
+                selected = tree.selection()
+                for item in selected:
+                    tree.delete(item)
+    
             def add_to_table():
                 type = type_entry.get()
                 name = name_entry.get()
@@ -103,8 +154,8 @@ class FinancialEntries:
                 date = date_entry.get()
 
                 # Validate Type
-                if type not in ["Expense", "Income"]:
-                    messagebox.showerror("Invalid Input", "Please enter 'Expense' or 'Income' in the description field.")
+                if type not in ["Expenses", "Income"]:
+                    messagebox.showerror("Invalid Input", "Please enter 'Expenses' or 'Income' in the description field.")
                     return
 
                 # Validate amount
@@ -124,7 +175,8 @@ class FinancialEntries:
                 except ValueError:
                     messagebox.showerror("Invalid Input","Date must be in MM-DD-YYYY format.")
                     return
-
+                
+                
 
                 if type and name and description and amount and date:
                     tree.insert("", "end", values=(type, name, description,f"{amount:.2f}", date))
@@ -134,6 +186,8 @@ class FinancialEntries:
                     amount_entry.delete(0, END)
                     date_entry.delete(0, END)
                 
+                    
+                
 
             add_button = Button(input_frame, text="Add", bg="gray", command=add_to_table)
             add_button.pack(side=LEFT, padx=5)
@@ -142,8 +196,8 @@ class FinancialEntries:
             bottom_frame = Frame(window)
             bottom_frame.pack(fill=X, padx=5, pady=5)
 
-            remove_button = Button(bottom_frame, text="Remove", bg="orange")
+            remove_button = Button(bottom_frame, text="Remove", bg="orange" ,command=remove_from_table)
             remove_button.pack(side=LEFT, padx=2)
-
-            edit_button = Button(bottom_frame, text="Edit", bg="gray")
-            edit_button.pack(side=LEFT, padx=2)
+            
+            save_button = Button(bottom_frame, text="Save", bg="green", command=save_to_excel)
+            save_button.pack(side=LEFT, padx=2)
