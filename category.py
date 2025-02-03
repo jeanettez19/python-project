@@ -34,7 +34,11 @@ class Category:
 
     def __init__(self):
         self.__filepath = Category.__filepath
-        self.__category_df = Category.__category_df
+        self.__category_df = pd.DataFrame({
+        "category_id": ["1","2","3","4","5","6","7","8"],
+        "category_name": ["Salary","Food","Investments","Transportation"
+                          ,"Utilities","Freelance","Others","Rent"]
+    })  # Default empty df
 
     def display_info(self):
         print(
