@@ -133,7 +133,8 @@ class Budget:
             if budget_row.empty:
                 raise ValueError(f"Budget ID {budget_id} does not exist in the 'budget_id' column.")
             # Drop the row with the matching 'budget_id'
-            self.__budget_df.drop(budget_row.index, inplace=True)          
+            self.__budget_df.drop(budget_row.index, inplace=True)
+            self.__budget_df.to_excel(self.__filepath, index=False)      
             return True
         except TypeError as e:
             raise RuntimeError(f"Invalid input type: {e}")

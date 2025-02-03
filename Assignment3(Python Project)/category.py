@@ -64,6 +64,31 @@ class Category:
             raise RuntimeError(
                 f"An error occurred while retrieving the category: {e}")
 
+    def get_category_id_by_name(self, category_name):
+        """retrieve the category_id by category_name"""
+        try:
+            # Ensure category_name is a string
+            if not isinstance(category_name, str):
+                raise TypeError(
+                    f"Category name must be a string, got {type(category_name).__name__}."
+                )
+
+            # Check if the category_name exists in the 'category_name' column
+            if category_name in self.__category_df['category_name'].values:
+                # Filter the DataFrame and return the corresponding 'category_id'
+                return self.__category_df.loc[
+                    self.__category_df['category_name'] == category_name,
+                    'category_id'].iloc[0]
+            else:
+                raise ValueError(
+                    f"Category name '{category_name}' does not exist in the 'category_name' column."
+                )
+        except Exception as e:
+            # Handle any unexpected errors
+            raise RuntimeError(
+                f"An error occurred while retrieving the category ID: {e}")
+
+
     def create_category(self, category_name):
         new_row = pd.DataFrame({
             "category_id": [
@@ -147,3 +172,4 @@ class Category:
             except ValueError:
                 print("Invalid input. Please enter a valid category ID.")
                 continue
+            

@@ -6,7 +6,7 @@ class Budget:
   
     __budget_df = pd.DataFrame({"budget_id":[],"date":[],"category":[],"category_id":[],"monthly_budget":[]}) # Default empty df
     __filepath = './data/budget.xlsx' # Default file path
-    __cat_file_path = './data/Categories.xlsx' # Default file path
+    __cat_file_path = './data/categories.xlsx' # Default file path
     @classmethod
     def initialize(cls,excel_file,cat_file_path):
         """Initialize the Budget class with data from files.
@@ -49,6 +49,7 @@ class Budget:
 
     def create_budget(self,date,category_id,monthly_budget):
         """Create a new budget entry in the DataFrame & save to Excel file."""
+        self.cat = Category.initialize(self.__cat_file_path)
         try:
             category_id = int(category_id)
         except ValueError as e:
@@ -145,7 +146,8 @@ class Budget:
             if budget_row.empty:
                 raise ValueError(f"Budget ID {budget_id} does not exist in the 'budget_id' column.")
             # Drop the row with the matching 'budget_id'
-            self.__budget_df.drop(budget_row.index, inplace=True)          
+            self.__budget_df.drop(budget_row.index, inplace=True)
+            self.__budget_df.to_excel(self.__filepath, index=False)          
             return True
         except TypeError as e:
             raise RuntimeError(f"Invalid input type: {e}")
