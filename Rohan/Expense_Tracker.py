@@ -26,8 +26,8 @@ class ExpenseTracker:
 
             # Sample data for table display purooses
 
-            transactions_data = Transaction.initialize_id_counter(current_directory + "/data/transaction.xlsx", "Transaction ID", False)
-            data = transactions_data.drop(columns=["Transaction ID"]).to_dict("records")
+            transactions_data = Transaction.initialize_id_counter(current_directory + "/data/transaction.xlsx", "transaction_id", False)
+            data = transactions_data.drop(columns=["transaction_id"]).to_dict("records")
             # Table for the entries
             table_frame = Frame(window)
             table_frame.pack(fill=BOTH, expand=True, padx=5, pady=5)
@@ -62,7 +62,7 @@ class ExpenseTracker:
 
                 # Insert rows into the Treeview
                 for entry in page_data:
-                    tree.insert("", "end", values=(entry["Category"], entry["Description"] ,entry["Amount"], entry["Date"]))
+                    tree.insert("", "end", values=(entry["category"], entry["description"] ,entry["amount"], entry["date"]))
 
                 # Enable or disable Checkbuttons based on the current page
                 if page == 1:

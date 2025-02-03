@@ -15,16 +15,16 @@ class Transaction:
             data = pd.read_excel(excel_file)
             max_id = data[id_column].max()
             cls._id_counter = max_id + 1 if not pd.isna(max_id) else 1
-            #print(cls._id_counter)
+            print(cls._id_counter)
 
         except FileNotFoundError:
             print(f"{excel_file} does not exist... Creating new file")
             #data = pd.DataFrame(columns=[id_column, "Amount", "Date", "Description"])
             if extra_column == False:
-                data = pd.DataFrame(columns=[id_column, "Category", "Description", "Amount", "Date"])
+                data = pd.DataFrame(columns=[id_column, "date", "category", "description", "amount"])
 
             else:
-                data = pd.DataFrame(columns=[id_column, "Category", "Description", "Amount", "Date","Transaction ID"])
+                data = pd.DataFrame(columns=[id_column, "date", "category", "description", "amount", "transaction_id"])
             data.to_excel(excel_file, index=False)
             cls._id_counter = 1  # Fallback if file not found
 
@@ -82,7 +82,7 @@ class Transaction:
             print(f"Error saving to Excel: {e}")
 
     def add_transaction(transaction_word):
-        cat = Category.initialize('./data/categories.xlsx')
+        cat = Category.initialize('./data/Categories.xlsx')
         print(f"\nEnter {transaction_word} details:")
         try:
             while True:
