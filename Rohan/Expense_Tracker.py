@@ -4,12 +4,15 @@ from tkinter import messagebox
 from tkinter import ttk
 from tkinter.ttk import Treeview
 from datetime import datetime
+from transactions import Transaction
+import os
 
 
 class ExpenseTracker:
     
     # Creating a function to open a new window (Expense Tracker)
     def open_window(self):
+            current_directory = os.path.dirname(os.path.abspath(__file__))
             window = Toplevel(self)
             window.title("Expense Tracker")
             window.geometry("600x400")
@@ -22,54 +25,9 @@ class ExpenseTracker:
             back_button.pack(side=LEFT)
 
             # Sample data for table display purooses
-            data = [
-                {"Category": "Food", "Description": "I hate myself" ,"Amount": 50, "Date": "2025-01-01"},
-                {"Category": "Transport",  "Description": "I hate myself" ,"Amount": 20, "Date": "2025-01-02"},
-                {"Category": "Groceries",  "Description": "I hate myself" ,"Amount": 100, "Date": "2025-01-03"},
-                {"Category": "Entertainment",  "Description": "I hate myself" ,"Amount": 40, "Date": "2025-01-04"},
-                {"Category": "Bills",  "Description": "I hate myself" ,"Amount": 200, "Date": "2025-01-05"},
-                {"Category": "Travel",  "Description": "I hate myself" ,"Amount": 150, "Date": "2025-01-06"},
-                {"Category": "Medical",  "Description": "I hate myself" ,"Amount": 30, "Date": "2025-01-07"},
-                {"Category": "Clothing",  "Description": "I hate myself" ,"Amount": 40, "Date": "2025-01-08"},
-                {"Category": "Bills",  "Description": "I hate myself" ,"Amount": 50, "Date": "2025-01-09"},
-                {"Category": "Travel",  "Description": "I hate myself" ,"Amount": 670, "Date": "2025-01-09"},
-                {"Category": "Clothing",  "Description": "I hate myself" ,"Amount": 33, "Date": "2025-01-10"},
-                {"Category": "Bills",  "Description": "I hate myself" ,"Amount": 624, "Date": "2025-01-10"},
-                {"Category": "Medical",  "Description": "I hate myself" ,"Amount": 34, "Date": "2025-01-10"},
-                {"Category": "Clothing",  "Description": "I hate myself" ,"Amount": 56, "Date": "2025-01-10"},
-                {"Category": "Bills",  "Description": "I hate myself" ,"Amount": 12, "Date": "2025-01-10"},
-                {"Category": "Entertainment",  "Description": "I hate myself" ,"Amount": 356, "Date": "2025-01-10"},
-                {"Category": "Clothing",  "Description": "I hate myself" ,"Amount": 123, "Date": "2025-01-11"},
-                {"Category": "Bills",  "Description": "I hate myself" ,"Amount": 44, "Date": "2025-01-12"},
-                {"Category": "Clothing",  "Description": "I hate myself" ,"Amount": 64, "Date": "2025-01-12"},
-                {"Category": "Food",  "Description": "I hate myself" ,"Amount": 6, "Date": "2025-01-13"},
-                {"Category": "Medical",  "Description": "I hate myself" ,"Amount": 60, "Date": "2025-01-13"},
-                {"Category": "Bills",  "Description": "I hate myself" ,"Amount": 60, "Date": "2025-01-14"},
-                {"Category": "Clothing",  "Description": "I hate myself" ,"Amount": 40, "Date": "2025-01-14"},
-                {"Category": "Food",  "Description": "I hate myself" ,"Amount": 60, "Date": "2025-01-14"},
-                {"Category": "Bills",  "Description": "I hate myself" ,"Amount": 680, "Date": "2025-01-15"},
-                {"Category": "Medical",  "Description": "I hate myself" ,"Amount": 80, "Date": "2025-01-15"},
-                {"Category": "Groceries",  "Description": "I hate myself" ,"Amount": 50, "Date": "2025-01-15"},
-                {"Category": "Clothing",  "Description": "I hate myself" ,"Amount": 40, "Date": "2025-01-15"},
-                {"Category": "Food",  "Description": "I hate myself" ,"Amount": 60, "Date": "2025-01-16"},
-                {"Category": "Bills",  "Description": "I hate myself" ,"Amount": 680, "Date": "2025-01-16"},
-                {"Category": "Medical",  "Description": "I hate myself" ,"Amount": 80, "Date": "2025-01-16"},
-                {"Category": "Groceries",  "Description": "I hate myself" ,"Amount": 50, "Date": "2025-01-17"},
-                {"Category": "Clothing",  "Description": "I hate myself" ,"Amount": 40, "Date": "2025-01-17"},
-                {"Category": "Food",  "Description": "I hate myself" ,"Amount": 60, "Date": "2025-01-17"},
-                {"Category": "Bills",  "Description": "I hate myself" ,"Amount": 680, "Date": "2025-01-17"},
-                {"Category": "Medical",  "Description": "I hate myself" ,"Amount": 80, "Date": "2025-01-17"},
-                {"Category": "Groceries",  "Description": "I hate myself" ,"Amount": 50, "Date": "2025-01-17"},
-                {"Category": "Clothing",  "Description": "I hate myself" ,"Amount": 40, "Date": "2025-01-18"},
-                {"Category": "Food",  "Description": "I hate myself" ,"Amount": 60, "Date": "2025-01-18"},
-                {"Category": "Bills",  "Description": "I hate myself" ,"Amount": 680, "Date": "2025-01-18"},
-                {"Category": "Medical",  "Description": "I hate myself" ,"Amount": 80, "Date": "2025-01-19"},
-                {"Category": "Groceries",  "Description": "I hate myself" ,"Amount": 50, "Date": "2025-01-19"},
-                {"Category": "Clothing",  "Description": "I hate myself" ,"Amount": 20, "Date": "2025-01-19"},
-                {"Category": "Food",  "Description": "I hate myself" ,"Amount": 10, "Date": "2025-01-19"},
-                {"Category": "Joaquin's Services",  "Description": "I hate myself" ,"Amount": 1, "Date": "2025-01-27"}
-            ]
 
+            transactions_data = Transaction.initialize_id_counter(current_directory + "/data/transaction.xlsx", "Transaction ID", False)
+            data = transactions_data.drop(columns=["Transaction ID"]).to_dict("records")
             # Table for the entries
             table_frame = Frame(window)
             table_frame.pack(fill=BOTH, expand=True, padx=5, pady=5)
