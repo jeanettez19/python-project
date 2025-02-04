@@ -1,13 +1,17 @@
+# Importing required libraries
 import pandas as pd
 from datetime import datetime
 import sys
 
+# Class to get the current month overview
 class QuickOverview:
     def __init__(self):
+        # Read Expense, Income and Transaction data
         try:
             self.expense = pd.read_excel("./data/expense.xlsx")
             self.income = pd.read_excel("./data/income.xlsx")
             self.transaction = pd.read_excel("./data/transaction.xlsx")
+        # Error handling
         except PermissionError:
             print("Permission denied to read the file, please close the file before proceeding.")
             sys.exit(1)
@@ -38,5 +42,4 @@ class QuickOverview:
         return {
             "Total Income": total_income,
             "Total Expense": total_expense,
-           # "Remaining Budget": remaining_budget
         }

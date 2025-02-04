@@ -1,14 +1,23 @@
+# Importing required libraries
 import pandas as pd
 from datetime import datetime
 import sys
 from category import Category
+
+# Creating a class for our Budget
 class Budget:
-  
-    __budget_df = pd.DataFrame({"budget_id":[],"date":[],"category":[],"category_id":[],"monthly_budget":[]}) # Default empty df
-    __filepath = './data/budget.xlsx' # Default file path
-    __cat_file_path = './data/categories.xlsx' # Default file path
+    __budget_df = pd.DataFrame({
+        "budget_id": [],
+        "date": [],
+        "category": [],
+        "category_id": [],
+        "monthly_budget": []
+    })  # Default empty df
+    __filepath = './data/budget.xlsx'  # Default file path
+    __cat_file_path = './data/categories.xlsx'  # Default file path
+
     @classmethod
-    def initialize(cls,excel_file,cat_file_path):
+    def initialize(cls, excel_file, cat_file_path):
         """Initialize the Budget class with data from files.
         Creates budget.xlsx if they do not exist.
         """
@@ -18,17 +27,17 @@ class Budget:
             cls.__budget_df = pd.read_excel(excel_file)
         except FileNotFoundError:
             print(f"{excel_file} does not exist... Creating new file")
-            cls.__budget_df.to_excel(excel_file,sheet_name='budget' ,index=False)   
+            cls.__budget_df.to_excel(excel_file, sheet_name='budget', index=False)
         except PermissionError:
             print(f"Permission denied to read {excel_file}, please close the file before proceeding.")
-            sys.exit(1)   
+            sys.exit(1)
         except Exception as e:
             print(f"Error reading file: {e}")
         # Return a new instance of the class
         return cls()
 
     def __init__(self):
-        """ Initialize the Budget class with the default file path and DataFrame."""
+        """Initialize the Budget class with the default file path and DataFrame."""
         self.__budget_df = Budget.__budget_df
 
     def display_info(self):
@@ -47,7 +56,7 @@ class Budget:
             # Handle any unexpected errors
             raise RuntimeError(f"An error occurred while retrieving the budgets: {e}")
 
-    def create_budget(self,date,category_id,monthly_budget):
+    def create_budget(self, date, category_id, monthly_budget):
         """Create a new budget entry in the DataFrame & save to Excel file."""
         self.cat = Category.initialize(self.__cat_file_path)
         try:
@@ -61,14 +70,14 @@ class Budget:
             # Check if the budget_id exists in the 'budget_id' column
             if self.cat.get_category(category_id):
                 new_row = pd.DataFrame({
-                "budget_id": [self.__budget_df['budget_id'].max() + 1 if not self.__budget_df.empty else 1],
-                "date":[datetime.strptime(date, "%d-%m-%Y").replace(hour=0, minute=0, second=0)],
-                "category": [self.cat.get_category(category_id)],
-                "category_id":[category_id],
-                "monthly_budget": [monthly_budget]
+                    "budget_id": [self.__budget_df['budget_id'].max() + 1 if not self.__budget_df.empty else 1],
+                    "date": [datetime.strptime(date, "%d-%m-%Y").replace(hour=0, minute=0, second=0)],
+                    "category": [self.cat.get_category(category_id)],
+                    "category_id": [category_id],
+                    "monthly_budget": [monthly_budget]
                 })
                 self.__budget_df = pd.concat([self.__budget_df, new_row], ignore_index=True)
-                    # Try saving to an Excel file
+                # Try saving to an Excel file
                 try:
                     self.__budget_df.to_excel(self.__filepath, index=False)
                     print("File saved successfully.")
@@ -77,10 +86,10 @@ class Budget:
             else:
                 raise ValueError(f"Category ID {category_id} does not exist in the 'Category_ID' column.")
         except Exception as e:
-              # Handle any unexpected errors
-              raise RuntimeError(f"An error occurred while retrieving the budget: {e}")
+            # Handle any unexpected errors
+            raise RuntimeError(f"An error occurred while retrieving the budget: {e}")
 
-    def update_budget(self, budget_id, category_id,new_monthly_budget):
+    def update_budget(self, budget_id, category_id, new_monthly_budget):
         """Update the monthly budget for a specific budget ID & save to Excel file."""
         try:
             # Ensure budget_id is an integer
@@ -113,7 +122,7 @@ class Budget:
                 self.cat.display_info()
                 category_id = int(input("Enter the category ID: "))
 
-                updated_status=self.update_budget(budget_id,category_id,new_monthly_budget)
+                updated_status = self.update_budget(budget_id, category_id, new_monthly_budget)
                 if updated_status:
                     print("Successfully updated budget! 🎉\n")
                     self.display_info()
@@ -147,7 +156,7 @@ class Budget:
                 raise ValueError(f"Budget ID {budget_id} does not exist in the 'budget_id' column.")
             # Drop the row with the matching 'budget_id'
             self.__budget_df.drop(budget_row.index, inplace=True)
-            self.__budget_df.to_excel(self.__filepath, index=False)          
+            self.__budget_df.to_excel(self.__filepath, index=False)
             return True
         except TypeError as e:
             raise RuntimeError(f"Invalid input type: {e}")
@@ -186,7 +195,7 @@ class Budget:
         while True:
             try:
                 budget_id = int(input("Enter the budget ID to delete: "))
-                deleted_status=self.delete_budget(budget_id)
+                deleted_status = self.delete_budget(budget_id)
                 if deleted_status:
                     print("Successfully deleted budget! 🎉\n")
                     self.display_info()
@@ -221,7 +230,7 @@ class Budget:
                     if datetime.strptime(date, "%d-%m-%Y") < current_date:
                         break
                     else:
-                          print("Date entered is in the future. Please enter a valid date")
+                        print("Date entered is in the future. Please enter a valid date")
                 except ValueError:
                     print("Invalid date format. Please enter the date in DD-MM-YYYY format")
 
@@ -235,7 +244,7 @@ class Budget:
                     else:
                         break
                 except ValueError:
-                    print("invalid input. PLease enter numeric values")
+                    print("invalid input. Please enter numeric values")
 
             while True:
                 try:
@@ -257,9 +266,8 @@ class Budget:
                     print(f"An unexpected error occurred: {e}")
 
         except Exception as e:
-            print(f"An error occured: {e}")
+            print(f"An error occurred: {e}")
 
-        self.create_budget(date,category_id,monthly_budget)
+        self.create_budget(date, category_id, monthly_budget)
         print("Successfully added new budget!!! \n\n")
         self.display_info()
-

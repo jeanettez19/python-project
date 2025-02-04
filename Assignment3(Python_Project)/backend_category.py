@@ -1,7 +1,8 @@
+# Importing required libraries
 import pandas as pd
 import sys
 
-
+# Creating a class for our Category
 class Category:
     __filepath = '../data/categories.xlsx'  # Default file path
     __category_df = pd.DataFrame({
@@ -16,18 +17,14 @@ class Category:
         # Read Excel file and find max id in the given col
         try:
             cls.__category_df = pd.read_excel(excel_file)
-
         except FileNotFoundError:
             print(f"{excel_file} does not exist... Creating new file")
-            cls.__category_df.to_excel(excel_file,
-                                       index=False)
-
+            cls.__category_df.to_excel(excel_file, index=False)
         except PermissionError:
             print(
                 f"Permission denied to read {excel_file}, please close the file before proceeding."
             )
             sys.exit(1)
-
         except Exception as e:
             print(f"Error reading file: {e}")
         # Return a new instance of the class
@@ -41,7 +38,7 @@ class Category:
         print(
             f"These are your current categories: \n\n{self.__category_df.to_string(index=False)}"
         )
-    
+
     def get_all_categories(self):
         return self.__category_df.to_dict(orient='records')
 
@@ -58,7 +55,8 @@ class Category:
                 # Filter the DataFrame and return the corresponding 'category_name'
                 return self.__category_df.loc[
                     self.__category_df['category_id'] == category_id,
-                    'category_name'].iloc[0]
+                    'category_name'
+                ].iloc[0]
             else:
                 raise ValueError(
                     f"Category ID {category_id} does not exist in the 'category_id' column."
@@ -66,10 +64,11 @@ class Category:
         except Exception as e:
             # Handle any unexpected errors
             raise RuntimeError(
-                f"An error occurred while retrieving the category: {e}")
-            
+                f"An error occurred while retrieving the category: {e}"
+            )
+
     def get_category_id_by_name(self, category_name):
-        """retrieve the category_id by category_name"""
+        """Retrieve the category_id by category_name"""
         try:
             # Ensure category_name is a string
             if not isinstance(category_name, str):
@@ -82,7 +81,8 @@ class Category:
                 # Filter the DataFrame and return the corresponding 'category_id'
                 return self.__category_df.loc[
                     self.__category_df['category_name'] == category_name,
-                    'category_id'].iloc[0]
+                    'category_id'
+                ].iloc[0]
             else:
                 raise ValueError(
                     f"Category name '{category_name}' does not exist in the 'category_name' column."
@@ -90,28 +90,22 @@ class Category:
         except Exception as e:
             # Handle any unexpected errors
             raise RuntimeError(
-                f"An error occurred while retrieving the category ID: {e}")
+                f"An error occurred while retrieving the category ID: {e}"
+            )
 
-
-    def create_category(self,category_type, category_name):
+    def create_category(self, category_type, category_name):
         new_row = pd.DataFrame({
             "category_id": [
-                self.__category_df['category_id'].max() +
-                1 if not self.__category_df.empty else 1
+                self.__category_df['category_id'].max() + 1
+                if not self.__category_df.empty else 1
             ],
             "category_type": [category_type],
             "category_name": [category_name]
         })
-        self.__category_df = pd.concat([self.__category_df, new_row],
-                                       ignore_index=True)
+        self.__category_df = pd.concat([self.__category_df, new_row], ignore_index=True)
         # Try saving to an Excel file
         try:
-            self.__category_df.to_excel(self.__filepath,
-                                        index=False)
-            # with pd.ExcelWriter(self.__filepath) as writer:
-            #     # Write each DataFrame to its respective sheet
-            #     for sheet_name, data in self.__category_df.items():
-            #         data.to_excel(writer, index=False)
+            self.__category_df.to_excel(self.__filepath, index=False)
             print("File saved successfully.")
         except Exception as e:
             print(f"Error writing to Excel file: {e}")
@@ -141,16 +135,15 @@ class Category:
                     "Error: Category name must contain only alphabetic characters. Please try again."
                 )
                 continue
-            
+
             category_type = input("Enter category type: \n1. Income\n2. Expense\n")
             if category_type == '1':
                 category_type = 'Income'
             elif category_type == '2':
                 category_type = 'Expenses'
-            
 
             # If valid, create the category
-            self.create_category(category_name,category_type)
+            self.create_category(category_name, category_type)
             print("Successfully added new category!!! \n\n")
             self.display_info()
             break
@@ -167,8 +160,8 @@ class Category:
                     delete_confirmation = input("Are you sure you want to delete this category? (y/n): ")
                     if delete_confirmation.lower() == 'y':
                         new_df = self.__category_df
-                        new_df.drop((selected_category_id-1), inplace=True)
-                        new_df.to_excel(self.__filepath,index=False)
+                        new_df.drop((selected_category_id - 1), inplace=True)
+                        new_df.to_excel(self.__filepath, index=False)
                         print("Successfully deleted category! 🎉\n")
                         self.display_info()
                         break
@@ -184,14 +177,3 @@ class Category:
             except ValueError:
                 print("Invalid input. Please enter a valid category ID.")
                 continue
-            
-                        
-
-# Initialize the _id_counter using data from the Excel file
-# cat = Category()
-# cat = Category.initialize('../data/categories.xlsx')
-# cat.display_info()
-# Create a Category instance
-# cat.create_category_process()
-# cat.delete_category()
-# print(cat.get_all_categories())

@@ -1,10 +1,14 @@
+# Importing required libraries
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 from datetime import datetime
-import os,sys
+import os
+import sys
 from category import Category
 
+
+# Creating a class for our Transactions
 class Transaction:
     """
     A class to represent a transaction.
@@ -20,7 +24,9 @@ class Transaction:
     _id_counter = 1  # Default value if no data is loaded
 
     @classmethod
-    def initialize_id_counter(cls, excel_file, id_column, extra_column = True):
+
+    # Funcrtion to Intialise the ID
+    def initialize_id_counter(cls, excel_file, id_column, extra_column=True):
         """
         Read the Excel file and find the maximum primary ID for transactions.
         If not, create a new file if it does not exist.
@@ -40,13 +46,12 @@ class Transaction:
 
         except FileNotFoundError:
             print(f"{excel_file} does not exist... Creating new file")
-            if extra_column == False:
+            if not extra_column:
                 data = pd.DataFrame(columns=[id_column, "date", "category", "description", "amount"])
-
             else:
                 data = pd.DataFrame(columns=[id_column, "date", "category", "description", "amount", "transaction_id"])
             data.to_excel(excel_file, index=False)
-            cls._id_counter = 1 
+            cls._id_counter = 1
 
         except PermissionError:
             print(f"Permission denied to read {excel_file}, please close the file before proceeding.")
@@ -58,6 +63,7 @@ class Transaction:
 
         return data
 
+    # Initializing the class
     def __init__(self, transaction_date, transaction_category, transaction_description, transaction_amount):
         """
         Initializes the Transaction class.
@@ -75,11 +81,15 @@ class Transaction:
         self.transaction_description = transaction_description
         self.transaction_category = transaction_category
 
+    # Function to Displat Information
     def display_info(self):
         """Display the transaction details."""
-        print(f"Transaction ID:{self.transaction_id}, Date:{self.transaction_date}, Category:{self.transaction_category}" +
-        f"Description:{self.transaction_description}, Amount:{self.transaction_amount}")
+        print(f"Transaction ID:{self.transaction_id}, Date:{self.transaction_date}, Category:{self.transaction_category} " +
+              f"Description:{self.transaction_description}, Amount:{self.transaction_amount}")
 
+    @staticmethod
+
+    # Function to Save File to Excel
     def save_file_to_excel(excel_file, existing_data, transactions, type):
         """
         Save the transactions to an existing/new Excel file.
@@ -98,7 +108,7 @@ class Transaction:
                       "category": transaction.transaction_category, "description": transaction.transaction_description,
                       "amount": transaction.transaction_amount} for transaction in transactions])
 
-            elif type == "expenses"    :
+            elif type == "expenses":
                 new_data = pd.DataFrame(
                     [{"expenses_id": expense.expenses_id, "date": expense.transaction_date,
                       "category": expense.transaction_category, "description": expense.transaction_description,
@@ -117,14 +127,17 @@ class Transaction:
                 updated_data = pd.concat([existing_data, new_data], ignore_index=True)
             # Save back to Excel
             updated_data.to_excel(excel_file, index=False)
-            print(f"Transactions saved")
+            print("Transactions saved")
         except Exception as e:
             print(f"Error saving to Excel: {e}")
 
+    @staticmethod
+
+    # Function to Add Transaction
     def add_transaction(transaction_word):
         """
         Add a new transaction to the system.
-        
+
         Args:
             transaction_word (str): The type of transaction to add.
 
@@ -142,9 +155,9 @@ class Transaction:
                 try:
                     datetime.strptime(date, "%d-%m-%Y")
                     if datetime.strptime(date, "%d-%m-%Y") < current_date:
-                      break
+                        break
                     else:
-                       print("Date entered is in the future. Please enter a valid date\n")
+                        print("Date entered is in the future. Please enter a valid date\n")
                 except ValueError:
                     print("Invalid date format. Please enter the date in DD-MM-YYYY format\n")
 
@@ -162,31 +175,35 @@ class Transaction:
                     if amount <= 0:
                         print("Amount must be greater than 0. Please enter amount again\n")
                     elif len(str(amount).split(".")[1]) > 2:
-                          print("Amount can have at most two decimal places. Please enter amount again\n")
+                        print("Amount can have at most two decimal places. Please enter amount again\n")
                     else:
                         break
                 except ValueError:
-                    print("invalid input. PLease enter numeric values\n")
+                    print("Invalid input. Please enter numeric values\n")
 
-            transaction_file = Transaction.initialize_id_counter("./data/transaction.xlsx","transaction_id", False)
+            transaction_file = Transaction.initialize_id_counter("./data/transaction.xlsx", "transaction_id", False)
+
             # Create a new transaction
             if transaction_word == "Income":
                 income_file = Income.initialize_id_counter("./data/income.xlsx", "income_id")
                 new_transaction = Income(date, category_name, description, amount)
-                Income.save_file_to_excel("./data/income.xlsx", income_file,[new_transaction], "income")
+                Income.save_file_to_excel("./data/income.xlsx", income_file, [new_transaction], "income")
 
             elif transaction_word == "Expenses":
                 expenses_file = Expenses.initialize_id_counter("./data/expense.xlsx", "expenses_id")
                 amount = -amount
                 new_transaction = Expenses(date, category_name, description, amount)
-                Expenses.save_file_to_excel("./data/expense.xlsx", expenses_file,[new_transaction], "expenses")
+                Expenses.save_file_to_excel("./data/expense.xlsx", expenses_file, [new_transaction], "expenses")
 
-            Transaction.save_file_to_excel("./data/transaction.xlsx", transaction_file,[new_transaction], "transactions")
+            Transaction.save_file_to_excel("./data/transaction.xlsx", transaction_file, [new_transaction], "transactions")
             print(f"\n{transaction_word} added successfully:")
             new_transaction.display_info()  # Display the transaction details
         except Exception as e:
             print(f"An error occurred: {e}")
 
+    @staticmethod
+
+    # Function to Remove Transaction
     def remove_transaction(transaction_word):
         """
         Remove a transaction from the system.
@@ -207,18 +224,17 @@ class Transaction:
 
                 while True:
                     print(expenses_data.iloc[start_index:total_rows])
-                    
+
                     # Check if there are earlier rows
                     if start_index == 0:
                         print("\nNo more rows to display.")
-                        #break
                     print("Enter 'n' to view earlier 10 entries")
                     print("Enter '0' to exit")
                     print("Enter the Income ID of the entry to remove it")
                     next_action = input("Enter your choice: ").strip().lower()
 
                     if next_action == 'n':
-                            # Update the indices to show the previous 10 rows
+                        # Update the indices to show the previous 10 rows
                         total_rows = start_index
                         start_index = max(0, start_index - 10)
 
@@ -229,18 +245,18 @@ class Transaction:
                         row_number = int(next_action)
                         if row_number in expenses_data["expenses_id"].values:
                             transaction_id = expenses_data[expenses_data["expenses_id"] == row_number]["transaction_id"].values[0]
-                            expenses_data = expenses_data[expenses_data["expenses_id"] != row_number]                            
+                            expenses_data = expenses_data[expenses_data["expenses_id"] != row_number]
                             transaction_data = transaction_data[transaction_data["transaction_id"] != transaction_id]
-                            expenses_data.to_excel("./data/expense.xlsx", index = False)
-                            transaction_data.to_excel("./data/transaction.xlsx", index = False)
-                            print (f"Entry with Expense ID {row_number} has been removed.")
+                            expenses_data.to_excel("./data/expense.xlsx", index=False)
+                            transaction_data.to_excel("./data/transaction.xlsx", index=False)
+                            print(f"Entry with Expense ID {row_number} has been removed.")
                             break
                         else:
-                            print (f"Expense ID {row_number} not found. Please enter a valid Expense ID")
+                            print(f"Expense ID {row_number} not found. Please enter a valid Expense ID")
                     else:
                         print("Invalid selection. Choose 'n' to view previous 10 rows, or '0' to exit")
             except Exception as e:
-                    print(f"Error: {e}")   
+                print(f"Error: {e}")
         elif transaction_word == 'Income':
             try:
                 income_data = pd.read_excel("./data/income.xlsx")
@@ -249,18 +265,17 @@ class Transaction:
 
                 while True:
                     print(income_data.iloc[start_index:total_rows])
-                    
+
                     # Check if there are earlier rows
                     if start_index == 0:
                         print("\nNo more rows to display.")
-                        #break
                     print("Enter 'n' to view earlier 10 entries")
                     print("Enter '0' to exit")
                     print("Enter the Income ID of the entry to remove it")
                     next_action = input("Enter your choice: ").strip().lower()
 
                     if next_action == 'n':
-                            # Update the indices to show the previous 10 rows
+                        # Update the indices to show the previous 10 rows
                         total_rows = start_index
                         start_index = max(0, start_index - 10)
 
@@ -272,33 +287,36 @@ class Transaction:
                         row_number = int(next_action)
                         if row_number in income_data["income_id"].values:
                             transaction_id = income_data[income_data["income_id"] == row_number]["transaction_id"].values[0]
-                            income_data = income_data[income_data["income_id"] != row_number]                            
+                            income_data = income_data[income_data["income_id"] != row_number]
                             transaction_data = transaction_data[transaction_data["transaction_id"] != transaction_id]
-                            income_data.to_excel("./data/income.xlsx", index = False)
-                            transaction_data.to_excel("./data/transaction.xlsx", index = False)
-                            print (f"Entry with Income ID {row_number} has been removed.")
+                            income_data.to_excel("./data/income.xlsx", index=False)
+                            transaction_data.to_excel("./data/transaction.xlsx", index=False)
+                            print(f"Entry with Income ID {row_number} has been removed.")
                             break
                         else:
-                            print (f"Income ID {row_number} not found. Please enter a valid Income ID")
+                            print(f"Income ID {row_number} not found. Please enter a valid Income ID")
                     else:
                         print("Invalid selection. Choose 'n' to view previous 10 rows, or '0' to exit")
             except Exception as e:
-                    print(f"Error: {e}")
+                print(f"Error: {e}")
 
+
+# Creating an Expenses Class
 class Expenses(Transaction):
     """
     A child class to represent an expense transaction.
-    
+
     Attributes:
         expenses_id (int): The unique identifier for the expense.
     """
     _id_counter = 1
 
+    # Intialising the Class
     def __init__(self, transaction_date, transaction_category, transaction_description, transaction_amount):
         super().__init__(transaction_date, transaction_category, transaction_description, transaction_amount)
         """
         Initializes the Expenses class.
-        
+
         Args:
             expenses_id (int): The unique identifier for the expense.
             transaction_id (int): The unique identifier for the transaction.
@@ -312,11 +330,14 @@ class Expenses(Transaction):
         self.transaction_id = Transaction._id_counter
         Transaction._id_counter += 1
 
+    # Function to Display Information
     def display_info(self):
         """Display the expense details."""
         print(f"Expenses ID:{self.expenses_id}, Date:{self.transaction_date}, " +
               f"Category:{self.transaction_category}, Description:{self.transaction_description}, Amount:{self.transaction_amount}")
-        
+
+
+# Creating an Income Class
 class Income(Transaction):
     """
     A child class to represent an income transaction.
@@ -326,10 +347,11 @@ class Income(Transaction):
     """
     _id_counter = 1
 
-    def __init__(self,transaction_date, transaction_category, transaction_description, transaction_amount):
+    # Intialising the Class
+    def __init__(self, transaction_date, transaction_category, transaction_description, transaction_amount):
         """
         Initializes the Income class.
-        
+
         Args:
             income_id (int): The unique identifier for the income.
             transaction_id (int): The unique identifier for the transaction.
@@ -344,7 +366,8 @@ class Income(Transaction):
         Income._id_counter += 1
         Transaction._id_counter += 1
 
+    # Function to Display Information
     def display_info(self):
         """Display the income details."""
-        print(f"Income ID:{self.income_id}, Date:{self.transaction_date}, Category:{self.transaction_category}," +
-              f" Description:{self.transaction_description}, Amount:{self.transaction_amount}")        
+        print(f"Income ID:{self.income_id}, Date:{self.transaction_date}, Category:{self.transaction_category}, " +
+              f"Description:{self.transaction_description}, Amount:{self.transaction_amount}")

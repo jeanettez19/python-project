@@ -1,7 +1,8 @@
+# Importing required libraries
 import pandas as pd
 import sys
 
-
+# Creating a Class Category
 class Category:
     """
     This class is used to manage the categories of expenses in the Expense Tracker.
@@ -17,6 +18,8 @@ class Category:
     })  # Default empty df
 
     @classmethod
+
+    # Function to Intialise the Class
     def initialize(cls, excel_file):
         """
         This class method initializes the Category class by reading the Excel file and creating 
@@ -29,23 +32,21 @@ class Category:
             Category: A new instance of the Category class.
         """
         cls.__filepath = excel_file
+
         # Read Excel file and find max id in the given col
         try:
             cls.__category_df = pd.read_excel(excel_file)
-
         except FileNotFoundError:
             print(f"{excel_file} does not exist... Creating new file")
-            cls.__category_df.to_excel(excel_file,
-                                       index=False)
-
+            cls.__category_df.to_excel(excel_file, index=False)
         except PermissionError:
             print(
                 f"Permission denied to read {excel_file}, please close the file before proceeding."
             )
             sys.exit(1)
-
         except Exception as e:
             print(f"Error reading file: {e}")
+
         # Return a new instance of the class
         return cls()
 
@@ -54,14 +55,16 @@ class Category:
         self.__filepath = Category.__filepath
         self.__category_df = Category.__category_df
 
+    # Function to Display Information
     def display_info(self):
         """This method displays the current categories in the Category class."""
         print(
             f"These are your current categories: \n\n{self.__category_df.to_string(index=False)}"
         )
 
+    # Function to Get Category
     def get_category(self, category_id):
-        """retrieve the category_name by category_id"""
+        """Retrieve the category_name by category_id"""
         try:
             # Ensure category_id is an integer
             if not isinstance(category_id, int):
@@ -84,8 +87,9 @@ class Category:
             raise RuntimeError(
                 f"An error occurred while retrieving the category: {e}")
 
+    # Function to Get Category ID by name
     def get_category_id_by_name(self, category_name):
-        """retrieve the category_id by category_name"""
+        """Retrieve the category_id by category_name"""
         try:
             # Ensure category_name is a string
             if not isinstance(category_name, str):
@@ -108,7 +112,7 @@ class Category:
             raise RuntimeError(
                 f"An error occurred while retrieving the category ID: {e}")
 
-
+    # Function to Create Category
     def create_category(self, category_name):
         """
         This method creates a new category with the given name and adds it to the Category class.
@@ -118,21 +122,17 @@ class Category:
         """
         new_row = pd.DataFrame({
             "category_id": [
-                self.__category_df['category_id'].max() +
-                1 if not self.__category_df.empty else 1
+                self.__category_df['category_id'].max() + 1
+                if not self.__category_df.empty else 1
             ],
             "category_name": [category_name]
         })
         self.__category_df = pd.concat([self.__category_df, new_row],
                                        ignore_index=True)
+        
         # Try saving to an Excel file
         try:
-            self.__category_df.to_excel(self.__filepath,
-                                        index=False)
-            # with pd.ExcelWriter(self.__filepath) as writer:
-            #     # Write each DataFrame to its respective sheet
-            #     for sheet_name, data in self.__category_df.items():
-            #         data.to_excel(writer, index=False)
+            self.__category_df.to_excel(self.__filepath, index=False)
             print("File saved successfully.")
         except Exception as e:
             print(f"Error writing to Excel file: {e}")
@@ -142,12 +142,13 @@ class Category:
         self.display_info()
 
         while True:
+
             # Prompt the user to enter a new category name
             category_name = input(
                 "Enter new category name (3-20 characters, first letter capitalized): "
             )
 
-            # Validate the input
+            # Validate the inputs
             if len(category_name) < 3 or len(category_name) > 20:
                 print(
                     "Error: Category name must be between 3 and 20 characters. Please try again."
@@ -170,6 +171,7 @@ class Category:
             self.display_info()
             break
 
+    # Function to Delete Category
     def delete_category(self):
         """This method is used to delete a category from the Category class."""
         while True:
@@ -177,14 +179,15 @@ class Category:
                 print("Here are the current Categories: ")
                 self.display_info()
                 print("")
+
                 # Prompt the user to enter a new category name
                 selected_category_id = int(input("Enter the category ID to delete: "))
                 if selected_category_id in self.__category_df['category_id'].values:
                     delete_confirmation = input("Are you sure you want to delete this category? (y/n): ")
                     if delete_confirmation.lower() == 'y':
                         new_df = self.__category_df
-                        new_df.drop((selected_category_id-1), inplace=True)
-                        new_df.to_excel(self.__filepath,index=False)
+                        new_df.drop((selected_category_id - 1), inplace=True)
+                        new_df.to_excel(self.__filepath, index=False)
                         print("Successfully deleted category! 🎉\n")
                         self.display_info()
                         break
@@ -200,4 +203,3 @@ class Category:
             except ValueError:
                 print("Invalid input. Please enter a valid category ID.")
                 continue
-            
