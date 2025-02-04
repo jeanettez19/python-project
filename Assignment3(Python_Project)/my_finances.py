@@ -9,8 +9,10 @@ from graphs import Graphs
 
 # Creating a class for our my finances window
 class MyFinances:
+    """
+    This class create the tkinter page to select each visual
+    """
     def open_mf_window(self):
-
         # Creating a new window
         window = Toplevel(self)
         window.title("Expense Tracker")

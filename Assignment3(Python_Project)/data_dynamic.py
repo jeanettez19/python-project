@@ -8,11 +8,16 @@ import sys
 
 # Creating a class for our Insights
 class Insights:
+    """
+    This class does all the data manipulation such it can be reflected in the graphs clearly
+    """
     # Initializing the class
     def __init__(self, expense_path, budget_path, income_path, transaction_path, category_path):
         self.load_data(expense_path, budget_path, income_path, transaction_path, category_path)
 
+    # Function for all data processing
     def load_data(self, expense_path, budget_path, income_path, transaction_path, category_path):
+        # Importing data sheets
         self.expense = pd.read_excel(expense_path)
         self.budget = pd.read_excel(budget_path)
         self.income = pd.read_excel(income_path)
@@ -32,6 +37,7 @@ class Insights:
         self.budgeted = self.budget.groupby('category')['monthly_budget'].sum()
         self.total_budget = self.budgeted.sum()
         
+        # Filtering out data for latest month for graphs 1, 2 and 3
         self.latest_month = self.expense_positive['year_month'].max()
         latest_month_timestamp = self.latest_month.to_timestamp()
         latest_month_word = latest_month_timestamp.strftime('%B %Y')
@@ -40,37 +46,32 @@ class Insights:
         self.budget_latest_month = self.budget[self.budget['year_month'] == self.latest_month]
         return latest_month_word
   
-    def overview(self): # Calcuate expenses and remaining budget for latest month
-        total_budget = self.budget_latest_month['monthly_budget'].sum()
-        total_expense = self.expense_latest_month['amount'].sum()
-        budget_remaining = total_budget - total_expense
-        return total_expense, budget_remaining
-
-    def expenses_by_category_latest_month(self): # Graph 1, display the expenses of its category, latest month
+    # Function for Graph 1, to display the expenses of each category in the latest month
+    def expenses_by_category_latest_month(self): 
         grouped_expense = self.expense_latest_month.groupby('category', as_index=False)['amount'].sum().sort_values(by='amount', ascending=False)
         return grouped_expense
 
-    # Function to get the expenses vs budget by category
+    # Function for graph 2, to get the expenses vs budget of each category in the latest month
     def expense_vs_budget_by_category_latest_month(self):
         expense_by_category = self.expense_latest_month.groupby('category')['amount'].sum()
         budget_by_category = self.budget_latest_month.set_index('category')['monthly_budget']
         merged_by_category = pd.merge(expense_by_category, budget_by_category, on='category', how='outer')
         return merged_by_category
 
-    # Function to get the daily expenses for the latest month
+    # Function for graph 3, to get the daily expenses everyday for the latest month
     def daily_expenses_latest_month(self):
         monthly_expenses = self.expense_latest_month.groupby([self.expense_latest_month['day'], 'category'])['amount'].sum().unstack().fillna(0)
         monthly_expenses = monthly_expenses.drop(columns=['Rent'], errors='ignore')
         return monthly_expenses
 
-    # Function to get the expenses vs budget for the latest month
+    # Function for graph 4, to get the expenses vs budget for all months
     def expenses_vs_budget_monthly(self):
         sum_expense = self.expense_positive.groupby(['year_month'])['amount'].sum()
         sum_budget = self.budget.groupby(['year_month'])['monthly_budget'].sum()
         budget_expense_df = pd.merge(sum_budget, sum_expense, on='year_month', how='outer')
         return budget_expense_df
 
-    # Function to get the expenses by category for each month
+    # Function for graph 5, to get the expenses of all categories for all month
     def expenses_by_category_monthly(self):
         monthly_spending = self.expense_positive.groupby(['year_month', 'category'])['amount'].sum().unstack()
         return monthly_spending
