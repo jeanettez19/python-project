@@ -36,8 +36,9 @@ class Budgets:
 
         budget_class = Budget().initialize("./data/budgets.xlsx", "./data/categories.xlsx")
         budget_data = budget_class.get_all_budgets()
+        # remove 00:00:00 from date
         for budget in budget_data:
-            tree.insert("", "end", values=(budget['budget_id'], budget['category'], f"{budget['monthly_budget']:.2f}", budget['date']))
+            tree.insert("", "end", values=(budget['budget_id'], budget['category'], f"{budget['monthly_budget']:.2f}",datetime.strptime(str(budget['date']), '%Y-%m-%d %H:%M:%S').strftime('%Y-%m-%d')))
 
         for col in columns:
             tree.heading(col, text=col)
@@ -63,9 +64,9 @@ class Budgets:
         expense_items = [category['category_name'] for category in categories_all if category.get('category_type') == "Expenses"]
 
         # Create a StringVar for the category dropdown
-        category_entryB = ttk.Combobox(input_frame, values=expense_items, width=20)
+        category_entryB = ttk.Combobox(input_frame, values=expense_items, width=20, state="readonly")
         category_entryB.pack(side=LEFT, fill=X, expand=True, padx=2)
-        category_entryB.insert(0, "Category")
+        category_entryB.set("Category")
 
         # Create a StringVar for the amount entry
         amount_entryB = Entry(input_frame)
@@ -115,7 +116,9 @@ class Budgets:
             # Validate month and year
             if month == "Month" or year == "Year":
                 messagebox.showerror("Invalid Input", "Please select both month and year.")
-            elif month != months and year != years:
+            elif month not in months and year not in years:
+                print(month, year)
+                print(months, years)
                 messagebox.showerror("Invalid Input", "Please select valid month and year.")
                 return
 
