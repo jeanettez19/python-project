@@ -3,6 +3,13 @@ import sys
 
 
 class Category:
+    """
+    This class is used to manage the categories of expenses in the Expense Tracker.
+
+    Attributes:
+    __filepath (str): The file path of the Excel file that contains the categories.
+    __category_df (pd.DataFrame): The DataFrame that stores the categories.
+    """
     __filepath = './data/Categories.xlsx'  # Default file path
     __category_df = pd.DataFrame({
         "category_id": [],
@@ -11,6 +18,16 @@ class Category:
 
     @classmethod
     def initialize(cls, excel_file):
+        """
+        This class method initializes the Category class by reading the Excel file and creating 
+        a new instance of the class.
+
+        Args:
+            excel_file (str): The file path of the Excel file that contains the categories.
+
+        Returns:
+            Category: A new instance of the Category class.
+        """
         cls.__filepath = excel_file
         # Read Excel file and find max id in the given col
         try:
@@ -33,15 +50,18 @@ class Category:
         return cls()
 
     def __init__(self):
+        """The constructor for the Category class."""
         self.__filepath = Category.__filepath
         self.__category_df = Category.__category_df
 
     def display_info(self):
+        """This method displays the current categories in the Category class."""
         print(
             f"These are your current categories: \n\n{self.__category_df.to_string(index=False)}"
         )
 
     def get_category(self, category_id):
+        """retrieve the category_name by category_id"""
         try:
             # Ensure category_id is an integer
             if not isinstance(category_id, int):
@@ -90,6 +110,12 @@ class Category:
 
 
     def create_category(self, category_name):
+        """
+        This method creates a new category with the given name and adds it to the Category class.
+
+        Args:
+            category_name (str): The name of the new category to be created.
+        """
         new_row = pd.DataFrame({
             "category_id": [
                 self.__category_df['category_id'].max() +
@@ -112,6 +138,7 @@ class Category:
             print(f"Error writing to Excel file: {e}")
 
     def create_category_process(self):
+        """This method is used to create a new category and add it to the Category class."""
         self.display_info()
 
         while True:
@@ -144,6 +171,7 @@ class Category:
             break
 
     def delete_category(self):
+        """This method is used to delete a category from the Category class."""
         while True:
             try:
                 print("Here are the current Categories: ")

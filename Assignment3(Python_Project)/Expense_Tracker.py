@@ -10,9 +10,12 @@ import pandas as pd
 
 
 class ExpenseTracker:
-    
-    # Creating a function to open a new window (Expense Tracker)
+    """
+    This class creates a GUI for the Expense Tracker, a feature to display the expenses in a table 
+    format.
+    """
     def open_window(self):
+            """This function creates a new window for the Expense Tracker feature."""
             current_directory = os.path.dirname(os.path.abspath(__file__))
             window = Toplevel(self)
             window.title("Expense Tracker")

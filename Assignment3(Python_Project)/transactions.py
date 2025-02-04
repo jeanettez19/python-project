@@ -6,27 +6,47 @@ import os,sys
 from category import Category
 
 class Transaction:
+    """
+    A class to represent a transaction.
+
+    Attributes:
+        transaction_id (int): The unique identifier for the transaction.
+        transaction_date (str): The date of the transaction.
+        transaction_category (str): The category of the transaction.
+        transaction_description (str): The description of the transaction.
+        transaction_amount (float): The amount of the transaction.
+    """
+
     _id_counter = 1  # Default value if no data is loaded
 
     @classmethod
     def initialize_id_counter(cls, excel_file, id_column, extra_column = True):
-        # Read the Excel file and find the maximum ID in the given column
+        """
+        Read the Excel file and find the maximum primary ID for transactions.
+        If not, create a new file if it does not exist.
+
+        Args:
+            excel_file (str): The path to the Excel file.
+            id_column (str): The name of the ID column.
+            extra_column (bool): Whether the class created is a child class of Transaction.
+
+        Returns:
+            pd.DataFrame: The data read from the Excel file.
+        """
         try:
             data = pd.read_excel(excel_file)
             max_id = data[id_column].max()
             cls._id_counter = max_id + 1 if not pd.isna(max_id) else 1
-            print(cls._id_counter)
 
         except FileNotFoundError:
             print(f"{excel_file} does not exist... Creating new file")
-            #data = pd.DataFrame(columns=[id_column, "Amount", "Date", "Description"])
             if extra_column == False:
                 data = pd.DataFrame(columns=[id_column, "date", "category", "description", "amount"])
 
             else:
                 data = pd.DataFrame(columns=[id_column, "date", "category", "description", "amount", "transaction_id"])
             data.to_excel(excel_file, index=False)
-            cls._id_counter = 1  # Fallback if file not found
+            cls._id_counter = 1 
 
         except PermissionError:
             print(f"Permission denied to read {excel_file}, please close the file before proceeding.")
@@ -39,6 +59,16 @@ class Transaction:
         return data
 
     def __init__(self, transaction_date, transaction_category, transaction_description, transaction_amount):
+        """
+        Initializes the Transaction class.
+
+        Args:
+            transaction_id (int): The unique identifier for the transaction.
+            transaction_date (str): The date of the transaction.
+            transaction_category (str): The category of the transaction.
+            transaction_description (str): The description of the transaction.
+            transaction_amount (float): The amount of the transaction
+        """
         self.transaction_id = Transaction._id_counter
         self.transaction_amount = transaction_amount
         self.transaction_date = transaction_date
@@ -46,10 +76,20 @@ class Transaction:
         self.transaction_category = transaction_category
 
     def display_info(self):
+        """Display the transaction details."""
         print(f"Transaction ID:{self.transaction_id}, Date:{self.transaction_date}, Category:{self.transaction_category}" +
         f"Description:{self.transaction_description}, Amount:{self.transaction_amount}")
 
     def save_file_to_excel(excel_file, existing_data, transactions, type):
+        """
+        Save the transactions to an existing/new Excel file.
+
+        Args:
+            excel_file (str): The path to the Excel file.
+            existing_data (pd.DataFrame): The existing data in the Excel file.
+            transactions (list): The list of transactions to save.
+            type (str): The type of transaction to save.
+        """
         try:
             # Prepare new data
             if type == "transactions":
@@ -82,6 +122,17 @@ class Transaction:
             print(f"Error saving to Excel: {e}")
 
     def add_transaction(transaction_word):
+        """
+        Add a new transaction to the system.
+        
+        Args:
+            transaction_word (str): The type of transaction to add.
+
+        Process:
+            1. Get the transaction details from the user.
+            2. Create a new transaction object.
+            3. Save the transaction to the Excel file.
+        """
         cat = Category.initialize('./data/Categories.xlsx')
         print(f"\nEnter {transaction_word} details:")
         try:
@@ -137,6 +188,16 @@ class Transaction:
             print(f"An error occurred: {e}")
 
     def remove_transaction(transaction_word):
+        """
+        Remove a transaction from the system.
+
+        Args:
+            transaction_word (str): The type of transaction to remove.
+
+        Process:
+            1. Get the transaction ID from the user.
+            2. Remove the transaction from the Excel file.
+        """
         transaction_data = pd.read_excel("./data/transaction.xlsx")
         if transaction_word == "Expenses":
             try:
@@ -225,23 +286,58 @@ class Transaction:
                     print(f"Error: {e}")
 
 class Expenses(Transaction):
+    """
+    A child class to represent an expense transaction.
+    
+    Attributes:
+        expenses_id (int): The unique identifier for the expense.
+    """
     _id_counter = 1
 
     def __init__(self, transaction_date, transaction_category, transaction_description, transaction_amount):
         super().__init__(transaction_date, transaction_category, transaction_description, transaction_amount)
+        """
+        Initializes the Expenses class.
+        
+        Args:
+            expenses_id (int): The unique identifier for the expense.
+            transaction_id (int): The unique identifier for the transaction.
+            transaction_date (str): The date of the transaction.
+            transaction_category (str): The category of the transaction.
+            transaction_description (str): The description of the transaction.
+            transaction_amount (float): The amount of the transaction
+        """
         self.expenses_id = Expenses._id_counter
         Expenses._id_counter += 1
         self.transaction_id = Transaction._id_counter
         Transaction._id_counter += 1
 
     def display_info(self):
+        """Display the expense details."""
         print(f"Expenses ID:{self.expenses_id}, Date:{self.transaction_date}, " +
               f"Category:{self.transaction_category}, Description:{self.transaction_description}, Amount:{self.transaction_amount}")
         
 class Income(Transaction):
+    """
+    A child class to represent an income transaction.
+
+    Attributes:
+        income_id (int): The unique identifier for the income.
+    """
     _id_counter = 1
 
     def __init__(self,transaction_date, transaction_category, transaction_description, transaction_amount):
+        """
+        Initializes the Income class.
+        
+        Args:
+            income_id (int): The unique identifier for the income.
+            transaction_id (int): The unique identifier for the transaction.
+            transaction_date (str): The date of the transaction.
+            transaction_category (str): The category of the transaction.
+            transaction_description (str): The description of the transaction.
+            transaction_amount (float): The amount of the transaction
+        """
         super().__init__(transaction_date, transaction_category, transaction_description, transaction_amount)
         self.transaction_id = Transaction._id_counter
         self.income_id = Income._id_counter
@@ -249,5 +345,6 @@ class Income(Transaction):
         Transaction._id_counter += 1
 
     def display_info(self):
+        """Display the income details."""
         print(f"Income ID:{self.income_id}, Date:{self.transaction_date}, Category:{self.transaction_category}," +
               f" Description:{self.transaction_description}, Amount:{self.transaction_amount}")        
