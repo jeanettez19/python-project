@@ -25,7 +25,7 @@ class Transaction:
 
     @classmethod
 
-    # Funcrtion to Intialise the ID
+    # Function to Intialise the ID
     def initialize_id_counter(cls, excel_file, id_column, extra_column=True):
         """
         Read the Excel file and find the maximum primary ID for transactions.
