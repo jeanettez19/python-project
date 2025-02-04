@@ -19,7 +19,7 @@ class Category:
 
     @classmethod
 
-    # Function to Intialise the Class
+    # Function to Intialize the Class
     def initialize(cls, excel_file):
         """
         This class method initializes the Category class by reading the Excel file and creating 

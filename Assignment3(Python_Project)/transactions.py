@@ -25,7 +25,7 @@ class Transaction:
 
     @classmethod
 
-    # Function to Intialise the ID
+    # Function to Intialize the ID
     def initialize_id_counter(cls, excel_file, id_column, extra_column=True):
         """
         Read the Excel file and find the maximum primary ID for transactions.
@@ -81,7 +81,7 @@ class Transaction:
         self.transaction_description = transaction_description
         self.transaction_category = transaction_category
 
-    # Function to Displat Information
+    # Function to Display Information
     def display_info(self):
         """Display the transaction details."""
         print(f"Transaction ID:{self.transaction_id}, Date:{self.transaction_date}, Category:{self.transaction_category} " +
@@ -311,7 +311,7 @@ class Expenses(Transaction):
     """
     _id_counter = 1
 
-    # Intialising the Class
+    # Initializing the Class
     def __init__(self, transaction_date, transaction_category, transaction_description, transaction_amount):
         super().__init__(transaction_date, transaction_category, transaction_description, transaction_amount)
         """
@@ -347,7 +347,7 @@ class Income(Transaction):
     """
     _id_counter = 1
 
-    # Intialising the Class
+    # Initializing the Class
     def __init__(self, transaction_date, transaction_category, transaction_description, transaction_amount):
         """
         Initializes the Income class.
