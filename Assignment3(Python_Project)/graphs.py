@@ -26,7 +26,12 @@ transaction_path = "./data/transaction.xlsx"
 category_path = "./data/categories.xlsx"
 
 class Graphs:
+    """
+    This class creates all the graphs and plots them on tkinter
+    """
+    # This function plots the first graph on tkinter
     def graph1_window(self):
+        # Loads the latest excel data
         latest_month = analysis.load_data(expense_path, budget_path, income_path, transaction_path, category_path)
         graph1 = analysis.expenses_by_category_latest_month()
         
@@ -56,7 +61,9 @@ class Graphs:
         canvas.draw()
         canvas.get_tk_widget().pack(side="top", fill="both", expand=True)
 
+    # This function plots the second graph on tkinter
     def graph2_window(self):
+        # Loads the latest excel data
         latest_month = analysis.load_data(expense_path, budget_path, income_path, transaction_path, category_path)
         graph2 = analysis.expense_vs_budget_by_category_latest_month()
         
@@ -90,8 +97,9 @@ class Graphs:
         canvas.draw()
         canvas.get_tk_widget().pack(side="top", fill="both", expand=True)
 
-    
+    # This function plots the third graph on tkinter
     def graph3_window(self):
+        # Loads the latest excel data
         latest_month = analysis.load_data(expense_path, budget_path, income_path, transaction_path, category_path)
         graph3 = analysis.daily_expenses_latest_month()
 
@@ -130,7 +138,9 @@ class Graphs:
         canvas.draw()
         canvas.get_tk_widget().pack(side="top", fill="both", expand=True)
 
+    # This function plots the fourth graph on tkinter
     def graph4_window(self):
+        # Loads the latest excel data
         analysis.load_data(expense_path, budget_path, income_path, transaction_path, category_path)
         graph4 = analysis.expenses_vs_budget_monthly()
 
@@ -163,7 +173,9 @@ class Graphs:
         canvas.draw()
         canvas.get_tk_widget().pack(side="top", fill="both", expand=True)
 
+    # This function plots the fifth graph on tkinter
     def graph5_window(self):
+        # Loads the latest excel data
         analysis.load_data(expense_path, budget_path, income_path, transaction_path, category_path)
         graph5 = analysis.expenses_by_category_monthly()
         
