@@ -5,6 +5,7 @@ from tkinter import ttk
 from tkinter.ttk import Treeview
 from datetime import datetime
 from functools import partial
+from graphs import Graphs
 
 # Creating a class for our my finances window
 class MyFinances:
@@ -18,7 +19,6 @@ class MyFinances:
         # Creating a top frame for the mf window
         top_f = Frame(window)
         top_f.pack(padx=5, pady=5, fill="both")
-
         back_button = Button(
             top_f, text="Return to Main Window", command=window.destroy,
             bg="Firebrick", fg="White"

@@ -6,7 +6,10 @@ from tkinter.ttk import Treeview
 from datetime import datetime
 
 # Importing Functions from other Files
-from Expense_Tracker import ExpenseTracker
+from budget import Budgets
+from my_finances import MyFinances
+from financial_entries import FinancialEntries
+from expense_tracker import ExpenseTracker
 from quick_overview import QuickOverview
 
 # Creating a class for our Main Window
