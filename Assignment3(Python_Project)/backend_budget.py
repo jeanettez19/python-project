@@ -6,6 +6,7 @@ from category import Category
 
 # Creating a class for our Budget
 class Budget:
+    """Backend class for Budget operations"""
     __budget_df = pd.DataFrame({
         "budget_id": [],
         "date": [],

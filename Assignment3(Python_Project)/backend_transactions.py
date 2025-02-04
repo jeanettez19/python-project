@@ -9,6 +9,7 @@ from category import Category
 
 # Creating a class for our Transactions
 class Transaction:
+    """Transaction class to handle all transactions including expenses and income"""
     _id_counter = 1  # Default value if no data is loaded
 
     @classmethod

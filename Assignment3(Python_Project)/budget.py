@@ -12,6 +12,7 @@ from backend_category import Category
 
 # Creating a class for our Budgets window
 class Budgets:
+    """Parent class for Budgets window"""
     def open_bs_window(self):
         # Creating a new window
         cat_class = Category().initialize("./data/categories.xlsx")

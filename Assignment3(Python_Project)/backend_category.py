@@ -4,6 +4,7 @@ import sys
 
 # Creating a class for our Category
 class Category:
+    """Backend class for Category operations"""
     __filepath = '../data/categories.xlsx'  # Default file path
     __category_df = pd.DataFrame({
         "category_id": [],
