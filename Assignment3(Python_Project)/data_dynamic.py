@@ -10,13 +10,15 @@ import sys
 class Insights:
     # Initializing the class
     def __init__(self, expense_path, budget_path, income_path, transaction_path, category_path):
-        # Importing data from each sheet
+        self.load_data(expense_path, budget_path, income_path, transaction_path, category_path)
+
+    def load_data(self, expense_path, budget_path, income_path, transaction_path, category_path):
         self.expense = pd.read_excel(expense_path)
         self.budget = pd.read_excel(budget_path)
         self.income = pd.read_excel(income_path)
         self.transaction = pd.read_excel(transaction_path)
         self.category = pd.read_excel(category_path)
-
+        
         # Data Manipulation for Expenses
         self.expense_positive = self.expense.copy()
         self.expense_positive['amount'] = self.expense_positive['amount'].abs()
@@ -29,17 +31,22 @@ class Insights:
         self.budget['year_month'] = self.budget['date'].dt.to_period('M')
         self.budgeted = self.budget.groupby('category')['monthly_budget'].sum()
         self.total_budget = self.budgeted.sum()
-
-    # Function to get the latest month
-    def latest_month(self):
+        
         self.latest_month = self.expense_positive['year_month'].max()
-        latest_month_word = self.latest_month.strftime('%B %Y')
+        latest_month_timestamp = self.latest_month.to_timestamp()
+        latest_month_word = latest_month_timestamp.strftime('%B %Y')
+        latest_month_word = str(latest_month_word)
         self.expense_latest_month = self.expense_positive[self.expense_positive['year_month'] == self.latest_month]
         self.budget_latest_month = self.budget[self.budget['year_month'] == self.latest_month]
         return latest_month_word
+  
+    def overview(self): # Calcuate expenses and remaining budget for latest month
+        total_budget = self.budget_latest_month['monthly_budget'].sum()
+        total_expense = self.expense_latest_month['amount'].sum()
+        budget_remaining = total_budget - total_expense
+        return total_expense, budget_remaining
 
-    # Function to get the total expenses
-    def expenses_by_category_latest_month(self):
+    def expenses_by_category_latest_month(self): # Graph 1, display the expenses of its category, latest month
         grouped_expense = self.expense_latest_month.groupby('category', as_index=False)['amount'].sum().sort_values(by='amount', ascending=False)
         return grouped_expense
 

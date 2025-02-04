@@ -19,20 +19,17 @@ analysis = Insights(
     "./data/categories.xlsx"
 )
 
-# Getting the latest month
-latest_month = analysis.latest_month()
+expense_path = "./data/expense.xlsx"
+budget_path = "./data/budgets.xlsx"
+income_path = "./data/income.xlsx"
+transaction_path = "./data/transaction.xlsx"
+category_path = "./data/categories.xlsx"
 
-# Calculating the graphs
-graph1 = analysis.expenses_by_category_latest_month()
-graph2 = analysis.expense_vs_budget_by_category_latest_month()
-graph3 = analysis.daily_expenses_latest_month()
-graph4 = analysis.expenses_vs_budget_monthly()
-graph5 = analysis.expenses_by_category_monthly()
-
-# Creating a class for our graphs
 class Graphs:
     def graph1_window(self):
-
+        latest_month = analysis.load_data(expense_path, budget_path, income_path, transaction_path, category_path)
+        graph1 = analysis.expenses_by_category_latest_month()
+        
         # Creating a new window
         window = Toplevel(self)
         window.title("Graph 1")
@@ -60,6 +57,9 @@ class Graphs:
         canvas.get_tk_widget().pack(side="top", fill="both", expand=True)
 
     def graph2_window(self):
+        latest_month = analysis.load_data(expense_path, budget_path, income_path, transaction_path, category_path)
+        graph2 = analysis.expense_vs_budget_by_category_latest_month()
+        
         # Creating a new window
         window = Toplevel(self)
         window.title("Graph 2")
@@ -92,6 +92,9 @@ class Graphs:
 
     
     def graph3_window(self):
+        latest_month = analysis.load_data(expense_path, budget_path, income_path, transaction_path, category_path)
+        graph3 = analysis.daily_expenses_latest_month()
+
         # Creating a new window
         window = Toplevel(self)
         window.title("Graph 3")
@@ -127,8 +130,10 @@ class Graphs:
         canvas.draw()
         canvas.get_tk_widget().pack(side="top", fill="both", expand=True)
 
-
     def graph4_window(self):
+        analysis.load_data(expense_path, budget_path, income_path, transaction_path, category_path)
+        graph4 = analysis.expenses_vs_budget_monthly()
+
         # Creating a new window
         window = Toplevel(self)
         window.title("Graph 4")
@@ -159,6 +164,9 @@ class Graphs:
         canvas.get_tk_widget().pack(side="top", fill="both", expand=True)
 
     def graph5_window(self):
+        analysis.load_data(expense_path, budget_path, income_path, transaction_path, category_path)
+        graph5 = analysis.expenses_by_category_monthly()
+        
         # Creating a new window
         window = Toplevel(self)
         window.title("Graph 5")
@@ -188,3 +196,4 @@ class Graphs:
         canvas = FigureCanvasTkAgg(fig, master=frame)
         canvas.draw()
         canvas.get_tk_widget().pack(side="top", fill="both", expand=True)
+

@@ -5,7 +5,6 @@ from tkinter import ttk
 from tkinter.ttk import Treeview
 from datetime import datetime
 from functools import partial
-from graphs import Graphs
 
 # Creating a class for our my finances window
 class MyFinances:
