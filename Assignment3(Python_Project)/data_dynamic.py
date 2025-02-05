@@ -38,13 +38,17 @@ class Insights:
         self.total_budget = self.budgeted.sum()
         
         # Filtering out data for latest month for graphs 1, 2 and 3
-        self.latest_month = self.expense_positive['year_month'].max()
-        latest_month_timestamp = self.latest_month.to_timestamp()
-        latest_month_word = latest_month_timestamp.strftime('%B %Y')
-        latest_month_word = str(latest_month_word)
-        self.expense_latest_month = self.expense_positive[self.expense_positive['year_month'] == self.latest_month]
-        self.budget_latest_month = self.budget[self.budget['year_month'] == self.latest_month]
-        return latest_month_word
+        # Filtering out data for latest month for graphs 1, 2 and 3
+        # Create the current month without setting a specific day
+        self.current_month = datetime.now().month
+        self.current_year = datetime.now().year
+        self.current_day = datetime.now().day
+        self.current_month_timestamp = pd.Timestamp(year = self.current_year, month = self.current_month, day = self.current_day)
+        current_month_year_month = self.current_month_timestamp.strftime('%Y-%m')
+        current_month_word = self.current_month_timestamp.strftime('%B %Y')
+        self.expense_latest_month = self.expense_positive[self.expense_positive['year_month'] == current_month_year_month]
+        self.budget_latest_month = self.budget[self.budget['year_month'] == current_month_year_month]
+        return current_month_word
   
     # Function for Graph 1, to display the expenses of each category in the latest month
     def expenses_by_category_latest_month(self): 
