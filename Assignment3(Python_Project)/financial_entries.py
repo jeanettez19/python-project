@@ -78,7 +78,7 @@ class FinancialEntries:
         type_entry.set("(Expenses / Income)")
 
         # Combobox for Category
-        name_entry = ttk.Combobox(input_frame, textvariable=item_var)
+        name_entry = ttk.Combobox(input_frame, textvariable=item_var,state="readonly")
         name_entry.pack(side=LEFT, fill=X, expand=True, padx=2)
         name_entry.set("(Category)")
 
