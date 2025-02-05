@@ -11,6 +11,7 @@ class QuickOverview:
             self.expense = pd.read_excel("./data/expense.xlsx")
             self.income = pd.read_excel("./data/income.xlsx")
             self.transaction = pd.read_excel("./data/transaction.xlsx")
+            self.budget = pd.read_excel("./data/budgets.xlsx")
         # Error handling
         except PermissionError:
             print("Permission denied to read the file, please close the file before proceeding.")
@@ -19,6 +20,7 @@ class QuickOverview:
             self.expense = pd.DataFrame(columns=["expenses_id", "date", "category", "description", "amount"])
             self.income = pd.DataFrame(columns=["income_id", "date", "category", "description", "amount"])
             self.transaction = pd.DataFrame(columns=["transaction_id", "date", "category", "description", "amount"])
+            self.budgets = pd.DataFrame(columns=["transaction_id", "date", "category", "description", "amount"])
 
     def get_current_month_overview(self):
         # Get the current month and year
