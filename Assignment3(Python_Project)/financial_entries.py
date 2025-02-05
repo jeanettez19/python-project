@@ -172,6 +172,10 @@ class FinancialEntries:
             # Validate Date
             try:
                 datetime.strptime(date, "%m-%d-%Y")
+                current_date = datetime.strptime(date, "%m-%d-%Y").now()
+                if datetime.strptime(date, "%m-%d-%Y") > current_date:
+                    messagebox.showerror("Invalid Input", "Date cannot be in the future.")
+                    return
             except ValueError:
                 messagebox.showerror("Invalid Input", "Date must be in MM-DD-YYYY format.")
                 return
