@@ -38,7 +38,6 @@ class Insights:
         self.total_budget = self.budgeted.sum()
         
         # Filtering out data for latest month for graphs 1, 2 and 3
-        # Filtering out data for latest month for graphs 1, 2 and 3
         # Create the current month without setting a specific day
         self.current_month = datetime.now().month
         self.current_year = datetime.now().year
