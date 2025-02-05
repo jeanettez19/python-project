@@ -9,4 +9,7 @@ cd Assignment3(Python_Project) # navigate to the directory where the main.py fil
 python Main.py
 ```
 
-
+### Compile
+pip install pyinstaller
+cd Assignment3(Python_Project)
+pyinstaller --onefile --windowed main.py

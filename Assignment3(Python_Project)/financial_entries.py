@@ -157,6 +157,11 @@ class FinancialEntries:
             if type not in ["Expenses", "Income"]:
                 messagebox.showerror("Invalid Input", "Please enter 'Expenses' or 'Income' in the description field.")
                 return
+            
+            # Validate Name
+            if not name:
+                messagebox.showerror("Invalid Input", "Please select a category.")
+                return
 
             # Validate Amount
             try:
